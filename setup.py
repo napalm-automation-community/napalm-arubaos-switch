@@ -1,0 +1,32 @@
+"""setup.py file."""
+
+from setuptools import setup, find_packages
+
+__author__ = "Guillermo Cotone <guillermo.cotone@gmail.com>"
+
+with open("requirements.txt", "r") as fs:
+    reqs = [r for r in fs.read().splitlines() if (len(r) > 0 and not r.startswith("#"))]
+
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
+setup(
+    name="napalm-arubaos-switch",
+    version="0.1.0",
+    packages=find_packages(),
+    author="Guillermo Cotone",
+    author_email="guillermo.cotone@gmail.com",
+    description="Napalm driver for ArubaOS Switches",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+
+    classifiers=[
+        "Topic :: Utilities",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Operating System :: POSIX :: Linux",
+    ],
+    url="https://github.com/napalm-automation-community/napalm-arubaos-switch/",
+    include_package_data=True,
+    install_requires=reqs,
+)

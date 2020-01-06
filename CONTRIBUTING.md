@@ -1,0 +1,2 @@
+Please read http://napalm.readthedocs.io/en/latest/contributing/index.html
+
