@@ -1,6 +1,5 @@
 import requests, base64
 import logging
-import http.client
 from time import sleep
 from itertools import zip_longest
 
@@ -9,10 +8,8 @@ from netaddr import IPNetwork
 from napalm.base.helpers import textfsm_extractor
 from napalm.base.base import NetworkDriver
 from napalm.base.exceptions import (
-    ConnectionException,
     MergeConfigException,
     ReplaceConfigException,
-    SessionLockedException,
     ConnectAuthError,
     ConnectionClosedException,
     CommandErrorException,
@@ -20,6 +17,7 @@ from napalm.base.exceptions import (
 )
 
 """ Debugging 
+import http.client
 http.client.HTTPConnection.debuglevel = 1
 logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
@@ -479,18 +477,19 @@ class AOS(NetworkDriver):
             return base64.b64decode(cmd_post.json()['result_base64_encoded']).decode('utf-8')
         else:
             raise CommandErrorException("Parsing CLI commands failed")
-            
+
     def _config_batch(self, cmd_list):
         url = self._api_url + 'cli_batch'
         data = {}
         data['cli_batch_base64_encoded'] = AOS._str_to_b64('\n'.join(cmd_list))
-        batch_run = self._apisession.post(url,json=data)
+        batch_run = self._apisession.post(url, json=data)
         if batch_run.status_code == 202:
             check_status = self._apisession.get(url + "/status")
             if check_status.status_code == 200:
                 for cmd_status in check_status.json()['cmd_exec_logs']:
                     if cmd_status['status'] != "CCS_SUCCESS":
-                        log.debug(f"command failed to execute with error \"{cmd_status['result']}\"")
+                        log.debug(f"command failed to execute with error \
+                                 {cmd_status['result']}")
                         return False
                     else:
                         return True
@@ -499,9 +498,9 @@ class AOS(NetworkDriver):
             log.debug("Failed to paste commands")
             return False
 
-    def _backup_config(self,config='running',destination='backup'):
+    def _backup_config(self, config='running', destination='backup'):
         """ Backups options: running, startup
-            API: 
+            API:
             - "CT_RUNNING_CONFIG",
             - "CT_STARTUP_CONFIG"
         """
@@ -522,7 +521,7 @@ class AOS(NetworkDriver):
         else:
             "unsupported argument; raise error"
             return False
-        cmd_post = self._apisession.post(url,json=payload)
+        cmd_post = self._apisession.post(url, json=payload)
         if not 300 > cmd_post.status_code >= 200:
             "raise error"
             pass
@@ -537,19 +536,19 @@ class AOS(NetworkDriver):
         """
         diff = self.compare_config()
         if diff != '':
-            if not (len(diff.get('diff_add_list')) and len(diff.get('diff_remove_list'))):
+            if not (len(diff.get('diff_add_list'))
+                    and len(diff.get('diff_remove_list'))):
                 self._commit_candidate(config='backup_running')
                 return True
             else:
                 return False
-    
+
     def close(self):
         """close device connection and delete sessioncookie
-        
         Returns:
             [type] -- [description]
         """
-        
+
         rest_logout = self._apisession.delete(self._login_url)
         self._headers['cookie'] = ''
 
@@ -557,4 +556,3 @@ class AOS(NetworkDriver):
             log.debug("Logout Failed")
         else:
             return "logout ok"
-        
