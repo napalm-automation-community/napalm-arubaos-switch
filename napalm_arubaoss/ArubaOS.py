@@ -1,21 +1,20 @@
-import requests
 import base64
-import logging
+from itertools import zip_longest
 from time import sleep
 
-from itertools import zip_longest
-
+import requests
+import logging
 from netaddr import IPNetwork
 
 from napalm.base.helpers import textfsm_extractor
 from napalm.base.base import NetworkDriver
 from napalm.base.exceptions import (
-    MergeConfigException,
-    ReplaceConfigException,
     ConnectAuthError,
     ConnectionClosedException,
     CommandErrorException,
-    CommandTimeoutException
+    CommandTimeoutException,
+    MergeConfigException,
+    ReplaceConfigException
 )
 
 """ Debugging
@@ -546,8 +545,8 @@ class AOS(NetworkDriver):
             if check_status.status_code == 200:
                 for cmd_status in check_status.json()['cmd_exec_logs']:
                     if cmd_status['status'] != "CCS_SUCCESS":
-                        log.debug(f"command failed to execute with error \
-                                 {cmd_status['result']}")
+                        log.debug("command failed to execute with error \
+                                 {}".format(cmd_status['result']))
                         return False
                     else:
                         return True
