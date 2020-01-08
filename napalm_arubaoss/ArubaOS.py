@@ -1,3 +1,4 @@
+"""ArubaOS-Switch Napalm driver."""
 import base64
 from itertools import zip_longest
 from time import sleep
@@ -33,16 +34,15 @@ log = logging.getLogger(__name__)
 # requests.packages.urllib3.disable_warnings()
 
 
-class AOS(NetworkDriver):
-    """
-    class for connecting to aruba-os devices using the rest-api
-    """
+class ArubaOSS(NetworkDriver):
+    """Class for connecting to aruba-os devices using the rest-api."""
+
     def __init__(self, hostname,
                  username='',
                  password='',
                  timeout=10,
                  optional_args=None):
-
+        """Instantiate the module."""
         self._headers = {'Content-Type': 'application/json'}
         self.hostname = hostname
         self.username = username
@@ -71,16 +71,7 @@ class AOS(NetworkDriver):
                                                   self.api)
 
     def open(self):
-        """[summary]
-
-        Keyword Arguments:
-            username {str} -- [description] (default: {'manager'})
-            password {str} -- [description] (default: {'manager'})
-            timeout {int} -- [description] (default: {10})
-
-        Returns:
-            boolean -- True if login was successful
-        """
+        """Open connection to the network device."""
         self._login_url = self._api_url + "login-sessions"
 
         params = {'userName': self.username, 'password': self.password}
@@ -105,6 +96,7 @@ class AOS(NetworkDriver):
             raise ConnectAuthError("Login failed")
 
     def is_alive(self):
+        """Check if device connection is alive."""
         """check if session cookie is still valid
         Returns:
             True - Session cookie is still valid
@@ -138,13 +130,7 @@ class AOS(NetworkDriver):
 
     @staticmethod
     def _str_to_b64(spayload):
-        """convert from str to b64 for aoss API
-        Arguments:
-            spayload {str} -- payload as string
-
-        Returns:
-            b64 -- encoded payload
-        """
+        """Convert from str to b64 for aoss API."""
         payload_b64 = base64.b64encode(spayload.encode())
         return payload_b64.decode('utf-8')
 
@@ -154,6 +140,7 @@ class AOS(NetworkDriver):
         return ':'.join(a+b for a, b in zip_longest(t, t, fillvalue=""))
 
     def load_replace_candidate(self, filename=None, config=None):
+        """Replace running config with the candidate."""
         """ Implentation of napalm module load_replace_candidate()
         ArubaOS-Switch supports payload_type options:
             - "RPT_PATCH_FILE" -> not implemented
@@ -168,12 +155,13 @@ class AOS(NetworkDriver):
             config = self._read_candidate(filename)
 
         if config is not None:
-            payload['config_base64_encoded'] = AOS._str_to_b64(config)
+            payload['config_base64_encoded'] = ArubaOSS._str_to_b64(config)
             load = self._apisession.post(url, json=payload)
             if load.status_code != 200:
                 raise ReplaceConfigException("Load configuration failed")
 
     def load_merge_candidate(self, filename=None, config=None):
+        """Merge candidate configuration with the running one."""
         """
         Imperative config change:
          Merge new config with existing one. There's no config validation
@@ -195,6 +183,7 @@ class AOS(NetworkDriver):
         self._backup_config(destination='REST_Payload_Backup')
 
     def cli(self, commands):
+        """Run CLI commands through the REST API."""
         output = {}
         if isinstance(commands, list):
             for cmd in commands:
@@ -205,6 +194,7 @@ class AOS(NetworkDriver):
             return self.cli(cmd_list)
 
     def get_arp_table(self):
+        """Get device's ARP table."""
         raw_arp = self._run_cmd("show arp")
         arp_table = textfsm_extractor(self, "show_arp", raw_arp)
         for arp in arp_table:
@@ -214,7 +204,8 @@ class AOS(NetworkDriver):
         return arp_table
 
     def get_environment(self):
-        """Get environment readings
+        """Get environment readings."""
+        """
         Currently (API v7) the API does not support reading information about
         fans, temperature, power or CPU.
         A textfsm template needs to be created to parse:
@@ -234,7 +225,7 @@ class AOS(NetworkDriver):
         return output
 
     def get_config(self, retrieve="all"):
-
+        """Get configuration stored on the device."""
         out = {'startup': '', 'candidate': '', 'running': ''}
 
         if (retrieve == 'all' or retrieve == 'startup'):
@@ -247,7 +238,7 @@ class AOS(NetworkDriver):
         return out
 
     def get_facts(self):
-
+        """Get general device information."""
         out = {'vendor': 'HPE Aruba'}
         out['interface_list'] = []
 
@@ -280,9 +271,11 @@ class AOS(NetworkDriver):
         return out
 
     def discard_config(self):
+        """Discard the candidate configuration."""
         self._backup_config(destination='REST_Payload_Backup')
 
     def compare_config(self):
+        """Compare the running config with the candidate one."""
         url = self._api_url + 'system/config/cfg_restore/latest_diff'
         check_url = url + '/status'
         data = {
@@ -309,6 +302,7 @@ class AOS(NetworkDriver):
             raise CommandErrorException("diff generation failed, raise status")
 
     def commit_config(self, message=None, confirm=0):
+        """Backups and commit the configuration, and handles commit confirm."""
         self._backup_config()
         log.debug("Confirm rollback time is {}".format(str(confirm)))
         if confirm > 0:
@@ -319,6 +313,7 @@ class AOS(NetworkDriver):
         self._commit_candidate(config='REST_Payload_Backup')
 
     def _commit_candidate(self, config):
+        """Commit the candidate configuration."""
         url = self._api_url + 'system/config/cfg_restore'
         data = {
                 "server_type": "ST_FLASH",
@@ -332,6 +327,7 @@ class AOS(NetworkDriver):
             return self._transaction_status(check_url).json()
 
     def get_mac_address_table(self):
+        """Get the mac-address table of the device."""
         url = self._api_url + 'mac-table'
         resp = self._apisession.get(url)
         if resp.status_code == 200:
@@ -351,11 +347,11 @@ class AOS(NetworkDriver):
             return table
 
     def get_interfaces_ip(self):
+        """Get IP interface IP addresses."""
         url = self._api_url + 'ipaddresses'
-        """ Return a dict with all the IP/net configured.
-        Looks like there's a bug n ArubaOS and is not returning IPv6
-        """
         url = self._api_url + 'ipaddresses'
+        "Looks like there's a bug n ArubaOS and is not returning IPv6"
+
         resp = self._apisession.get(url)
         if resp.status_code == 200:
             output = {}
@@ -374,6 +370,7 @@ class AOS(NetworkDriver):
             return output
 
     def get_lldp_neighbors(self):
+        """Get a list of LLDP neighbors."""
         url = self._api_url + '/lldp/remote-device'
         resp = self._apisession.get(url)
         log.debug("API returned {}".format(resp.status_code))
@@ -391,6 +388,7 @@ class AOS(NetworkDriver):
             return neighbor_table
 
     def get_lldp_neighbors_detail(self):
+        """Get LLDP neighbor information."""
         url = self._api_url + '/lldp/remote-device'
         resp = self._apisession.get(url)
         log.debug("API returned {}".format(resp.status_code))
@@ -419,6 +417,7 @@ class AOS(NetworkDriver):
             return neighbor_table
 
     def get_ntp_peers(self):
+        """Get NTP peers."""
         """
         ArubaOS does not support NTP "peers", just upstream servers.
         This method is just an alias of get_ntp_servers()
@@ -426,6 +425,7 @@ class AOS(NetworkDriver):
         self.get_ntp_servers()
 
     def get_ntp_servers(self):
+        """Get NTP servers."""
         " TO-DO: add IPv6 support, currently getting 404 from the API"
         url = self._api_url + 'config/ntp/server/ip4addr'
         resp = self._apisession.get(url)
@@ -436,7 +436,7 @@ class AOS(NetworkDriver):
             return output
 
     def get_ntp_stats(self):
-
+        """Get NTP peer statistics."""
         out = []
         associations = self.get_ntp_servers()
 
@@ -469,26 +469,14 @@ class AOS(NetworkDriver):
         return out
 
     def get_optics(self):
-        """ Transceiver output/input readings. We need to parse CLI:
+        """Transceiver output/input readings. We need to parse CLI."""
+        """ CMDs:
          - show interfaces transceiver detail
         """
         return super().get_optics()
 
     def get_route_to(self, destination='', protocol=''):
-        """Return the active route for a given destination
-
-        Keyword Arguments:
-            destination {unicode} -- IP destination with/without subnet mask)
-            protocol {str} -- Supported protocols are:
-                                static,
-                                connected,
-                                rip/ripng,
-                                ospf/ospf3
-
-        Returns:
-            [dict] -- Matching route along with next_hop,
-                        preference, metric and protocol
-        """
+        """Get active route for a given destination."""
         v4_table = []
         v6_table = []
         if destination != '':
@@ -538,7 +526,8 @@ class AOS(NetworkDriver):
     def _config_batch(self, cmd_list):
         url = self._api_url + 'cli_batch'
         data = {}
-        data['cli_batch_base64_encoded'] = AOS._str_to_b64('\n'.join(cmd_list))
+        data['cli_batch_base64_encoded'] = ArubaOSS._str_to_b64(
+                                            '\n'.join(cmd_list))
         batch_run = self._apisession.post(url, json=data)
         if batch_run.status_code == 202:
             check_status = self._apisession.get(url + "/status")
@@ -556,8 +545,9 @@ class AOS(NetworkDriver):
             return False
 
     def _backup_config(self, config='running', destination='backup'):
-        """ Backups options: running, startup
-            API:
+        """Backup config."""
+        """Supported configs
+        API:
             - "CT_RUNNING_CONFIG",
             - "CT_STARTUP_CONFIG"
         """
@@ -586,11 +576,7 @@ class AOS(NetworkDriver):
             return cmd_post.json()
 
     def rollback(self):
-        """if there was a change, rollback to the old running config
-        assuming "config1" is running config
-
-        RE-CHECK!!!!!!!
-        """
+        """Rollback configuration."""
         diff = self.compare_config()
         if diff != '' and isinstance(diff, dict):
             if not (len(diff.get('diff_add_list'))
@@ -601,11 +587,7 @@ class AOS(NetworkDriver):
                 return False
 
     def close(self):
-        """close device connection and delete sessioncookie
-        Returns:
-            [type] -- [description]
-        """
-
+        """Close device connection and delete sessioncookie."""
         rest_logout = self._apisession.delete(self._login_url)
         self._headers['cookie'] = ''
 
