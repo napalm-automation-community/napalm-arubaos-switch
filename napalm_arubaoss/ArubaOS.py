@@ -615,7 +615,7 @@ class ArubaOSS(NetworkDriver):
                     hostname, _, _ = socket.gethostbyaddr(
                         ttl_probe_data[probe_count].get('gateway', {}).get('ip_address', {}).get('octets', '')
                     )
-                except socket.herror as _:
+                except socket.herror:  # fetch if nothing can be found
                     hostname = ''
 
                 probe = {
