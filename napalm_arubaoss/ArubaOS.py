@@ -588,7 +588,8 @@ class ArubaOSS(NetworkDriver):
                 return False
 
     def traceroute(self, destination, source='', ttl=255, timeout=2, vrf=''):
-        """Executes traceroute on the device and returns a dictionary with the result.
+        """
+        Execute traceroute on the device and returns a dictionary with the result.
 
         :param destination: needed argument
         :param source: not implemented as not available from device
