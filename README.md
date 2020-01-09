@@ -1,3 +1,6 @@
+[![PyPI](https://img.shields.io/pypi/v/napalm-arubaos-switch.svg)](https://pypi.python.org/pypi/napalm-arubaos-switch)
+[![PyPI](https://img.shields.io/pypi/dm/napalm-arubaos-switch.svg)](https://pypi.python.org/pypi/napalm-arubaos-switch)
+[![Building Status](https://github.com/napalm-automation-community/napalm-arubaos-switch/workflows/Python%20package/badge.svg?branch=master)](https://github.com/napalm-automation-community/napalm-arubaos-switch/actions?query=workflow%3A"Python%20package")
 # Napalm-arubaoss
 Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some modules may not work properly in older versions.
 
@@ -100,23 +103,23 @@ mine_enabled: true # not required, but nice to have
 
 #### Supported Salt execution modules
 
- - [grains.items](docs/saltstack.md#grains.items)
- - [net.arp](docs/saltstack.md#net.arp)
- - [net.mac](docs/saltstack.md#net.mac)
- - [net.ipaddrs](docs/saltstack.md#net.ipaddrs)
- - [net.lldp](docs/saltstack.md#net.lldp)
- - [net.facts](docs/saltstack.md#net.facts)
- - [net.ping](docs/saltstack.md#net.ping)
- - [net.traceroute](docs/saltstack.md#net.traceroute)
- - [route.show](docs/saltstack.md#route.show)
- - [net.cli](docs/saltstack.md#net.cli)
- - [net.config](docs/saltstack.md#net.config)
- - [net.load_config](docs/saltstack.md#net.load_config)
- - [net.compare_config](docs/saltstack.md#net.load_config)
+ - [grains.items](docs/saltstack.md#grainsitems)
+ - [net.arp](docs/saltstack.md#netarp)
+ - [net.mac](docs/saltstack.md#netmac)
+ - [net.ipaddrs](docs/saltstack.md#netipaddrs)
+ - [net.lldp](docs/saltstack.md#netlldp)
+ - [net.facts](docs/saltstack.md#netfacts)
+ - [net.ping](docs/saltstack.md#netping)
+ - [net.traceroute](docs/saltstack.md#nettraceroute)
+ - [route.show](docs/saltstack.md#routeshow)
+ - [net.cli](docs/saltstack.md#netcli)
+ - [net.config](docs/saltstack.md#netconfig)
+ - [net.load_config](docs/saltstack.md#netload_config)
+ - [net.compare_config](docs/saltstack.md#netload_config)
  - net.load_template ( Issue #18)
  - net.discard_config
- - [ntp.servers](docs/saltstack.md#ntp.servers)
- - [napalm.compliance_report](docs/saltstack.md#napalm.compliance_report)
+ - [ntp.servers](docs/saltstack.md#ntpservers)
+ - [napalm.compliance_report](docs/saltstack.md#napalmcompliance_report)
 
 More details in [Saltstack examples](docs/saltstack.md)
 
