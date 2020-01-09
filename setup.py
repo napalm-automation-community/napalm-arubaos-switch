@@ -12,7 +12,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="napalm-arubaos-switch",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
     author="Guillermo Cotone",
     author_email="15230109+gcotone@users.noreply.github.com",

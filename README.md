@@ -63,9 +63,7 @@ The following software is required:
 
 To install simply run:
 ```
-git clone https://github.com/napalm-automation-community/napalm-arubaos-switch
-cd napalm-arubaoss-switch
-pip3 install .
+pip3 install napalm-arubaos-switch
 ```
 
 ### Switch configuration
