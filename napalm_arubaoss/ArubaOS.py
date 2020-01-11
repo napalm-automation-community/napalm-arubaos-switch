@@ -21,7 +21,7 @@ from napalm.base.exceptions import (
     ReplaceConfigException
 )
 
-from utils import (
+from napalm_arubaoss.utils import (
     get_interface_list,
     get_interface_details,
     fill_interface_dict
