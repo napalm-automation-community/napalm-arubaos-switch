@@ -4,6 +4,8 @@ from itertools import zip_longest
 from time import sleep
 
 import requests
+from requests_futures.sessions import FuturesSession
+from concurrent.futures import as_completed
 import logging
 import socket
 from netaddr import IPNetwork
@@ -17,6 +19,12 @@ from napalm.base.exceptions import (
     CommandTimeoutException,
     MergeConfigException,
     ReplaceConfigException
+)
+
+from utils import (
+    get_interface_list,
+    get_interface_details,
+    fill_interface_dict
 )
 
 """ Debugging
@@ -630,6 +638,49 @@ class ArubaOSS(NetworkDriver):
                 del probe
 
         return ret
+
+    def get_interfaces(self):
+        """
+        Get interface details.
+
+        Last Flapped, Speed and MTU are currently not implemented.
+
+        :return: returns the interfaces dictionary
+        """
+        ret = {}
+
+        raw_interfaces = self.cli('show interfaces')
+        interface_list = get_interface_list(raw_interfaces['show interfaces'])
+
+        with FuturesSession() as session:
+            session.verify = self._apisession.verify
+            if self.keepalive is None:
+                session.keep_alive = False
+            session.headers = self._headers
+
+            async_calls = (
+                session.post(
+                    self._api_url + 'cli',
+                    json={'cmd': 'show interface {}'.format(interface)},
+                    hooks={'response': self._interfaces_callback(interface=interface, ret=ret)}
+                ) for interface in interface_list
+            )
+            [k.result() for k in as_completed(async_calls)]
+
+        ret = {
+            k: fill_interface_dict(
+                get_interface_details(v)
+            ) for k, v in ret.items()
+        }
+
+        return ret
+
+    def _interfaces_callback(self, *args, **kwargs):
+        def callback(r, *rargs, **rkwargs):
+            interface = kwargs['interface']
+            ret = kwargs['ret']
+            ret[interface] = base64.b64decode(r.json()['result_base64_encoded']).decode('utf-8')
+        return callback
 
     def close(self):
         """Close device connection and delete sessioncookie."""
