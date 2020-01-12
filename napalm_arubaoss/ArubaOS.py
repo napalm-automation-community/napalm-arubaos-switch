@@ -706,6 +706,9 @@ class ArubaOSS(NetworkDriver):
                     attribute[0]: attribute[1](interface_entry[attribute[0]])
                     for attribute in attributes if attribute[0] in interface_entry.keys()
                 }
+                for attribute in attributes:
+                    if attribute[0] not in interface_dict.keys():
+                        interface_dict.update({attribute[0]: ''})
                 interface.update(interface_dict)
 
             return None
