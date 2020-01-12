@@ -20,7 +20,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * get_facts()                     ✅
     * get_firewall_policies()         ❌*
     * get_interfaces_counters()       ❌***
-    * get_interfaces()                ✅
+    * get_interfaces()                ✅****
     * get_interfaces_ip()             ✅
     * get_ipv6_neighbors_table()      ❌*
     * get_lldp_neighbors()            ✅
@@ -44,11 +44,10 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * rollback()                      ✅
     * traceroute()                    ✅
 
-\* N/A - not supported on the tested ArubaOS devices
-
-\*\* Incomplete support for load merge, configuration is directly pushed to the running config. Not recommended, use with precaution !!!
-
-\*\*\* No easy way to get this. API does not support it and there's no single command to display it for all ports
+\* N/A - not supported on the tested ArubaOS devices  
+\*\* Incomplete support for load merge, configuration is directly pushed to the running config. Not recommended, use with precaution !!!  
+\*\*\* No easy way to get this. API does not support it and there's no single command to display it for all ports  
+\*\*\*\* Needs a review. Couldn't find an endpoint to get this info + maybe the interfaces are named differently on other devices
 
 ## Getting Started
 
