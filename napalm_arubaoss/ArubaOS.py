@@ -24,7 +24,8 @@ from napalm.base.exceptions import (
 from napalm_arubaoss.utils import (
     get_interface_list,
     get_interface_details,
-    fill_interface_dict
+    fill_interface_dict,
+    interfaces_callback
 )
 
 """ Debugging
@@ -662,7 +663,7 @@ class ArubaOSS(NetworkDriver):
                 session.post(
                     self._api_url + 'cli',
                     json={'cmd': 'show interface {}'.format(interface)},
-                    hooks={'response': self._interfaces_callback(interface=interface, ret=ret)}
+                    hooks={'response': interfaces_callback(interface=interface, ret=ret)}
                 ) for interface in interface_list
             )
             [k.result() for k in as_completed(async_calls)]
@@ -674,13 +675,6 @@ class ArubaOSS(NetworkDriver):
         }
 
         return ret
-
-    def _interfaces_callback(self, *args, **kwargs):
-        def callback(r, *rargs, **rkwargs):
-            interface = kwargs['interface']
-            ret = kwargs['ret']
-            ret[interface] = base64.b64decode(r.json()['result_base64_encoded']).decode('utf-8')
-        return callback
 
     def close(self):
         """Close device connection and delete sessioncookie."""

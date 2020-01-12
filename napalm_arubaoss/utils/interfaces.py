@@ -6,6 +6,7 @@ is filling the dictionary which gets returned
 by the main class method.
 """
 import re
+import base64
 
 
 def get_interface_list(cli_ret):
@@ -53,3 +54,18 @@ def fill_interface_dict(data):
     ret['mac_address'] = mac
 
     return ret
+
+
+def interfaces_callback(*args, **kwargs):
+    """
+    Retun callback used by the asynchronous calls in ArubaOSS.get_interfaces.
+
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    def callback(r, *rargs, **rkwargs):
+        interface = kwargs['interface']
+        ret = kwargs['ret']
+        ret[interface] = base64.b64decode(r.json()['result_base64_encoded']).decode('utf-8')
+    return callback
