@@ -642,6 +642,20 @@ class ArubaOSS(NetworkDriver):
         """
         ret = {}
 
+        attributes = (
+            ('is_enabled', lambda i: {'Yes': True, 'No': False}.get(i)),
+            ('is_up', lambda i: {'UP': True, 'DOWN': False}.get(i)),
+            ('description', lambda i: i),
+            ('last_flapped', lambda i: i),
+            ('speed', lambda i: i),
+            ('mtu', lambda i: i),
+            ('mac_address', lambda mac: ':'.join(
+                mac.replace('-', '').upper()[i:i + 2]
+                for i in range(0, 12, 2)
+            )
+             )
+        )
+
         commands = ['display interface', 'show interfaces brief']
 
         with FuturesSession() as session:
@@ -657,31 +671,25 @@ class ArubaOSS(NetworkDriver):
                     hooks={
                         'response': self._callback_interfaces(
                             ret=ret,
-                            template=cmd.replace(' ', '_')
+                            template=cmd.replace(' ', '_'),
+                            attributes=attributes
                         )
                     }
                 ) for cmd in commands
             )
             [k.result() for k in as_completed(async_calls)]
 
+            for k, v in ret.items():
+                value_list = set(v.keys())
+                attributes_list = set([attribute[0] for attribute in attributes])
+                missing = attributes_list - value_list
+                for i in missing:
+                    ret[k][i] = ''
+
         return ret
 
     def _callback_interfaces(self, *args, **kwargs):
         def callback(r, cself=self, *cargs, **ckwargs):
-            attributes = (
-                ('is_enabled', lambda i: {'Yes': True, 'No': False}.get(i)),
-                ('is_up', lambda i: {'UP': True, 'DOWN': False}.get(i)),
-                ('description', lambda i: i),
-                ('last_flapped', lambda i: i),
-                ('speed', lambda i: i),
-                ('mtu', lambda i: i),
-                ('mac_address', lambda mac: ':'.join(
-                        mac.replace('-', '').upper()[i:i + 2]
-                        for i in range(0, 12, 2)
-                    )
-                 )
-            )
-
             if not r.ok:
                 return
 
@@ -690,6 +698,8 @@ class ArubaOSS(NetworkDriver):
 
             if not ret:
                 return
+
+            attributes = kwargs['attributes']
 
             raw = base64.b64decode(ret).decode('utf-8')
             parsed = textfsm_extractor(
@@ -706,9 +716,6 @@ class ArubaOSS(NetworkDriver):
                     attribute[0]: attribute[1](interface_entry[attribute[0]])
                     for attribute in attributes if attribute[0] in interface_entry.keys()
                 }
-                for attribute in attributes:
-                    if attribute[0] not in interface_dict.keys():
-                        interface_dict.update({attribute[0]: ''})
                 interface.update(interface_dict)
 
             return None
