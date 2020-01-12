@@ -21,13 +21,6 @@ from napalm.base.exceptions import (
     ReplaceConfigException
 )
 
-from napalm_arubaoss.utils import (
-    get_interface_list,
-    get_interface_details,
-    fill_interface_dict,
-    interfaces_callback
-)
-
 """ Debugging
 import http.client
 http.client.HTTPConnection.debuglevel = 1
@@ -68,7 +61,7 @@ class ArubaOSS(NetworkDriver):
         self.api = optional_args.get("api", "v6")
         ssl = optional_args.get("ssl", True)
         self.keepalive = optional_args.get("keepalive", None)
-        self.ssl_verify = optional_args.get("ssl_verify", False)
+        self.ssl_verify = optional_args.get("ssl_verify", True)
         if ssl:
             self.proto = 'https'
         else:
@@ -92,8 +85,7 @@ class ArubaOSS(NetworkDriver):
 
         self._apisession.headers = self._headers
         # bug #4 - random delay while re-using TCP connection - workaroud:
-        if self.keepalive is None:
-            self._apisession.keep_alive = False
+        self._apisession.keep_alive = self.ssl_verify
 
         rest_login = self._apisession.post(self._login_url, json=params,
                                            timeout=self.timeout)
@@ -650,8 +642,7 @@ class ArubaOSS(NetworkDriver):
         """
         ret = {}
 
-        raw_interfaces = self.cli('show interfaces')
-        interface_list = get_interface_list(raw_interfaces['show interfaces'])
+        commands = ['display interface', 'show interfaces brief']
 
         with FuturesSession() as session:
             session.verify = self._apisession.verify
@@ -662,19 +653,63 @@ class ArubaOSS(NetworkDriver):
             async_calls = (
                 session.post(
                     self._api_url + 'cli',
-                    json={'cmd': 'show interface {}'.format(interface)},
-                    hooks={'response': interfaces_callback(interface=interface, ret=ret)}
-                ) for interface in interface_list
+                    json={'cmd': cmd},
+                    hooks={
+                        'response': self._callback_interfaces(
+                            ret=ret,
+                            template=cmd.replace(' ', '_')
+                        )
+                    }
+                ) for cmd in commands
             )
             [k.result() for k in as_completed(async_calls)]
 
-        ret = {
-            k: fill_interface_dict(
-                get_interface_details(v)
-            ) for k, v in ret.items()
-        }
-
         return ret
+
+    def _callback_interfaces(self, *args, **kwargs):
+        def callback(r, cself=self, *cargs, **ckwargs):
+            attributes = (
+                ('is_enabled', lambda i: {'Yes': True, 'No': False}.get(i)),
+                ('is_up', lambda i: {'UP': True, 'DOWN': False}.get(i)),
+                ('description', lambda i: i),
+                ('last_flapped', lambda i: i),
+                ('speed', lambda i: i),
+                ('mtu', lambda i: i),
+                ('mac_address', lambda mac: ':'.join(
+                        mac.replace('-', '').upper()[i:i + 2]
+                        for i in range(0, 12, 2)
+                    )
+                 )
+            )
+
+            if not r.ok:
+                return
+
+            ret = r.json()
+            ret = ret.get('result_base64_encoded')
+
+            if not ret:
+                return
+
+            raw = base64.b64decode(ret).decode('utf-8')
+            parsed = textfsm_extractor(
+                cls=cself,
+                template_name=kwargs['template'],
+                raw_text=raw
+            )
+
+            for interface_entry in parsed:
+                if not kwargs['ret'].get(interface_entry['interface_id']):
+                    kwargs['ret'][interface_entry['interface_id']] = {}
+                interface = kwargs['ret'][interface_entry['interface_id']]
+                interface_dict = {
+                    attribute[0]: attribute[1](interface_entry[attribute[0]])
+                    for attribute in attributes if attribute[0] in interface_entry.keys()
+                }
+                interface.update(interface_dict)
+
+            return None
+        return callback
 
     def close(self):
         """Close device connection and delete sessioncookie."""
