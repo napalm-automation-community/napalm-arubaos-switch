@@ -4,7 +4,6 @@ from itertools import zip_longest
 from json import JSONDecodeError
 from time import sleep
 
-import requests
 from requests.models import Response
 from requests_futures.sessions import FuturesSession
 from concurrent.futures import as_completed
@@ -82,21 +81,49 @@ class ArubaOSS(NetworkDriver):
         self.cli_output = {}
 
     def get(self, *args, **kwargs) -> Response:
+        """
+        Call a single command (Helper-Function).
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         ret = self._apisession.get(*args, **kwargs)
 
         return ret.result()
 
     def post(self, *args, **kwargs) -> Response:
+        """
+        Call a single command (Helper-Function).
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         ret = self._apisession.post(*args, **kwargs)
 
         return ret.result()
 
     def put(self, *args, **kwargs) -> Response:
+        """
+        Call a single command (Helper-Function).
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         ret = self._apisession.put(*args, **kwargs)
 
         return ret.result()
 
     def delete(self, *args, **kwargs) -> Response:
+        """
+        Call a single command (Helper-Function).
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         ret = self._apisession.delete(*args, **kwargs)
 
         return ret.result()
@@ -305,7 +332,6 @@ class ArubaOSS(NetworkDriver):
 
     def get_config(self, retrieve='all', full=False):
         """Get configuration stored on the device."""
-
         out = {'startup': '', 'candidate': '', 'running': ''}
 
         cmd_mapping = {
