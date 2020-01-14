@@ -72,7 +72,7 @@ class ArubaOSS(NetworkDriver):
         self._apisession.verify = optional_args.get("ssl_verify", True)
         self._apisession.headers = {'Content-Type': 'application/json'}
         # bug #4 - random delay while re-using TCP connection - workaround:
-        self._apisession.keep_alive = optional_args.get("keepalive", False)
+        self._apisession.keep_alive = optional_args.get("keepalive", True)
         self._login_url = self._api_url + "login-sessions"
         self._cli_url = self._api_url + 'cli'
         self._system_status_url = self._api_url + 'system/status'
@@ -80,7 +80,7 @@ class ArubaOSS(NetworkDriver):
 
         self.cli_output = {}
 
-    def get(self, *args, **kwargs) -> Response:
+    def _get(self, *args, **kwargs) -> Response:
         """
         Call a single command (Helper-Function).
 
@@ -92,7 +92,7 @@ class ArubaOSS(NetworkDriver):
 
         return ret.result()
 
-    def post(self, *args, **kwargs) -> Response:
+    def _post(self, *args, **kwargs) -> Response:
         """
         Call a single command (Helper-Function).
 
@@ -104,7 +104,7 @@ class ArubaOSS(NetworkDriver):
 
         return ret.result()
 
-    def put(self, *args, **kwargs) -> Response:
+    def _put(self, *args, **kwargs) -> Response:
         """
         Call a single command (Helper-Function).
 
@@ -116,7 +116,7 @@ class ArubaOSS(NetworkDriver):
 
         return ret.result()
 
-    def delete(self, *args, **kwargs) -> Response:
+    def _delete(self, *args, **kwargs) -> Response:
         """
         Call a single command (Helper-Function).
 
@@ -132,7 +132,7 @@ class ArubaOSS(NetworkDriver):
         """Open connection to the network device."""
         params = {'userName': self.username, 'password': self.password}
 
-        rest_login = self.post(
+        rest_login = self._post(
             self._login_url,
             json=params,
             timeout=self.timeout
@@ -154,7 +154,7 @@ class ArubaOSS(NetworkDriver):
             None - There's an error
         """
         url = self._api_url + 'system'
-        endpoint = self.get(url)
+        endpoint = self._get(url)
         if endpoint.status_code == 200:
             "Session cookie is still valid"
             return {"is_alive": True}
@@ -170,7 +170,7 @@ class ArubaOSS(NetworkDriver):
         status = 'CRS_IN_PROGRESS'
         elapsed = 0
         while status == 'CRS_IN_PROGRESS' and elapsed < self.timeout:
-            call = self.get(url)
+            call = self._get(url)
             if call.status_code in range(200, 300):
                 status = call.json()
                 return status
@@ -209,7 +209,7 @@ class ArubaOSS(NetworkDriver):
 
         if config is not None:
             payload['config_base64_encoded'] = ArubaOSS._str_to_b64(config)
-            load = self.post(url, json=payload)
+            load = self._post(url, json=payload)
             if load.status_code != 200:
                 raise ReplaceConfigException("Load configuration failed")
 
@@ -357,7 +357,7 @@ class ArubaOSS(NetworkDriver):
             'interface_list': []
         }
 
-        call = self.get(self._system_status_url)
+        call = self._get(self._system_status_url)
         if call.ok:
             rest_out = call.json()
             out['hostname'] = rest_out['name']
@@ -367,7 +367,7 @@ class ArubaOSS(NetworkDriver):
 
             # get domain name to generate the FQDN
             url = self._api_url + 'dns'
-            call = self.get(url)
+            call = self._get(url)
             if call.ok:
                 rest_out = call.json()
                 out['fqdn'] = out['hostname'] + "." + \
@@ -375,7 +375,7 @@ class ArubaOSS(NetworkDriver):
 
         # Get interface list
         url = self._api_url + 'system/status/switch'
-        call = self.get(url)
+        call = self._get(url)
         if call.ok:
             rest_out = call.json()
             for blade in rest_out['blades']:
@@ -398,12 +398,12 @@ class ArubaOSS(NetworkDriver):
                 "is_oobm": False
                 }
         # trigger configuration comparison
-        diff = self.post(url, json=data)
+        diff = self._post(url, json=data)
 
         if not diff.ok:
             raise CommandErrorException("diff generation failed, raise status")
 
-        diff_output = self.get(check_url)
+        diff_output = self._get(check_url)
 
         if not diff_output.status_code == 200:
             raise CommandErrorException("diff generation failed, raise status")
@@ -436,7 +436,7 @@ class ArubaOSS(NetworkDriver):
                 "file_name": config,
                 "is_oobm": False
                 }
-        cmd_post = self.post(url, json=data)
+        cmd_post = self._post(url, json=data)
 
         if not cmd_post.json()['failure_reason']:
             check_url = url + '/status'
@@ -446,10 +446,10 @@ class ArubaOSS(NetworkDriver):
     def get_mac_address_table(self):
         """Get the mac-address table of the device."""
         url = self._api_url + 'mac-table'
-        resp = self.get(url)
+        resp = self._get(url)
         if resp.status_code == 200:
             table = []
-            for entry in resp.json().get('mac_table_entry_element'):
+            for entry in resp.json()._get('mac_table_entry_element'):
                 item = {
                     'mac': self._mac_reformat(entry['mac_address']),
                     'interface': entry['port_id'],
@@ -468,9 +468,9 @@ class ArubaOSS(NetworkDriver):
         "Looks like there's a bug n ArubaOS and is not returning IPv6"
 
         output = {}
-        resp = self.get(self._ipaddresses_url)
+        resp = self._get(self._ipaddresses_url)
         if resp.status_code == 200:
-            for address in resp.json().get('ip_address_subnet_element'):
+            for address in resp.json()._get('ip_address_subnet_element'):
                 iface_name = "VLAN" + str(address['vlan_id'])
                 if iface_name not in output.keys():
                     output[iface_name] = {}
@@ -488,7 +488,7 @@ class ArubaOSS(NetworkDriver):
     def get_lldp_neighbors(self):
         """Get a list of LLDP neighbors."""
         url = self._api_url + '/lldp/remote-device'
-        resp = self.get(url)
+        resp = self._get(url)
         log.debug("API returned {}".format(resp.status_code))
 
         if resp.ok:
@@ -498,8 +498,8 @@ class ArubaOSS(NetworkDriver):
                 if not neighbor_table.get(port):
                     neighbor_table[port] = []
                 remote_device = {
-                        'hostname': neighbor.get('system_name'),
-                        'port': neighbor.get('port_id')
+                        'hostname': neighbor._get('system_name'),
+                        'port': neighbor._get('port_id')
                         }
                 neighbor_table[port].append(remote_device)
 
@@ -508,7 +508,7 @@ class ArubaOSS(NetworkDriver):
     def get_lldp_neighbors_detail(self, *args, **kwargs):
         """Get LLDP neighbor information."""
         url = self._api_url + '/lldp/remote-device'
-        resp = self.get(url)
+        resp = self._get(url)
         log.debug("API returned {}".format(resp.status_code))
 
         if resp.ok:
@@ -518,18 +518,18 @@ class ArubaOSS(NetworkDriver):
                 if not neighbor_table.get(port):
                     neighbor_table[port] = []
                 remote_device = {
-                    'remote_system_name': neighbor.get('system_name'),
-                    'remote_chassis_id': neighbor.get('chassis_id'),
-                    'remote_port': neighbor.get('port_id'),
+                    'remote_system_name': neighbor._get('system_name'),
+                    'remote_chassis_id': neighbor._get('chassis_id'),
+                    'remote_port': neighbor._get('port_id'),
                     'remote_port_description':
-                        neighbor.get('port_description'),
+                        neighbor._get('port_description'),
                     'remote_system_description':
-                        ''.join(neighbor.get('system_description')),
+                        ''.join(neighbor._get('system_description')),
                     'remote_system_capab':
-                        [k for k, v in neighbor.get(
+                        [k for k, v in neighbor._get(
                             'capabilities_supported').items() if v is True],
                     'remote_system_enable_capab':
-                        [k for k, v in neighbor.get(
+                        [k for k, v in neighbor._get(
                             'capabilities_enabled').items() if v is True]
                     }
                 neighbor_table[port].append(remote_device)
@@ -548,10 +548,10 @@ class ArubaOSS(NetworkDriver):
         """Get NTP servers."""
         " TO-DO: add IPv6 support, currently getting 404 from the API"
         url = self._api_url + 'config/ntp/server/ip4addr'
-        resp = self.get(url)
+        resp = self._get(url)
         if resp.status_code == 200:
             output = {}
-            for server in resp.json().get('ntpServerIp4addr_element'):
+            for server in resp.json()._get('ntpServerIp4addr_element'):
                 output[server['ip4addr']['ip4addr_value']] = {}
             return output
 
@@ -563,7 +563,7 @@ class ArubaOSS(NetworkDriver):
         for association in associations.keys():
             url = self._api_url + \
                 'monitoring/ntp/associations/detail/' + association
-            resp = self.get(url)
+            resp = self._get(url)
             if resp.status_code == 200:
                 ntp_entry = {
                     'remote': resp.json()['IP Address'],
@@ -654,14 +654,14 @@ class ArubaOSS(NetworkDriver):
         data = {
             'cli_batch_base64_encoded': ArubaOSS._str_to_b64('\n'.join(cmd_list))
         }
-        batch_run = self.post(url, json=data)
+        batch_run = self._post(url, json=data)
 
         if not batch_run.status_code == 202:
             log.debug("Failed to paste commands")
 
             return False
 
-        check_status = self.get(url + "/status")
+        check_status = self._get(url + "/status")
         if check_status.status_code == 200:
             for cmd_status in check_status.json()['cmd_exec_logs']:
                 if cmd_status['status'] != "CCS_SUCCESS":
@@ -696,7 +696,7 @@ class ArubaOSS(NetworkDriver):
         else:
             "unsupported argument; raise error"
             return False
-        cmd_post = self.post(url, json=payload)
+        cmd_post = self._post(url, json=payload)
         if not cmd_post.ok:
             "raise error"
             pass
@@ -730,21 +730,21 @@ class ArubaOSS(NetworkDriver):
         """
         url = self._api_url + 'trace-route'
         data = {"destination": {"ip_address": {"version": "IAV_IP_V4", "octets": destination}}}
-        data_post = self.post(url, json=data)
+        data_post = self._post(url, json=data)
 
         if not data_post.status_code == 200:
             return {'error': 'unknown host {}'.format(destination)}
 
         ret = {'success': {}}
-        ttl_data = data_post.json().get('ttl_data', [])
+        ttl_data = data_post.json()._get('ttl_data', [])
 
         for hop_count in range(len(ttl_data)):
             ret['success'][hop_count + 1] = {'probes': {}}
-            ttl_probe_data = ttl_data[hop_count].get('ttl_probe_data', [])
+            ttl_probe_data = ttl_data[hop_count]._get('ttl_probe_data', [])
             for probe_count in range(len(ttl_probe_data)):
                 try:
                     hostname, _, _ = socket.gethostbyaddr(
-                        ttl_probe_data[probe_count].get('gateway', {}).get('ip_address', {}).get('octets', '')
+                        ttl_probe_data[probe_count]._get('gateway', {})._get('ip_address', {})._get('octets', '')
                     )
                 except socket.herror:  # fetch if nothing can be found
                     hostname = ''
@@ -752,7 +752,7 @@ class ArubaOSS(NetworkDriver):
                 probe = {
                     'rtt': float(ttl_probe_data[probe_count]['probe_time_in_millis']),
                     'ip_address':
-                        ttl_probe_data[probe_count].get('gateway', {}).get('ip_address', {}).get('octets', ''),
+                        ttl_probe_data[probe_count]._get('gateway', {})._get('ip_address', {})._get('octets', ''),
                     'hostname': hostname
                 }
 
@@ -763,7 +763,7 @@ class ArubaOSS(NetworkDriver):
 
     def close(self):
         """Close device connection and delete sessioncookie."""
-        rest_logout = self.delete(self._login_url)
+        rest_logout = self._delete(self._login_url)
         self._apisession.headers['cookie'] = ''
 
         if not rest_logout.status_code == 204:
