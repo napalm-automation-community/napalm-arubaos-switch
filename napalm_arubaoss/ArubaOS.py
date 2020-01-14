@@ -761,6 +761,40 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
+    def ping(self, destination='', source='', timeout=1, ttl='', size='', count='', vrf=''):
+        """
+        Execute ping on the device and returns a dictionary with the result.
+
+        :param destination: needed argument
+        :param source: not implemented as not available from device
+        :param ttl: not implemented as not available from device
+        :param timeout: not implemented as not available from device
+        :param vrf: not implemented as not available from device
+        :param size: not implemented as not available from device
+        :param count: not implemented as not available from device
+        :return: returns a dictionary containing the hops and probes
+        """
+        url = self._api_url + 'ping'
+        data = {"destination": {"ip_address": {"version": "IAV_IP_V4", "octets": destination}},
+                "timeout_in_seconds": timeout}
+        data_post = self._apisession.post(url, json=data)
+        if not data_post.status_code == 200:
+            return {'error': 'unknown host {}'.format(destination)}
+        if 'PR_OK' in data_post.json().get('result'):
+            result = {'success': {
+                'probes_sent': 1,
+                'packet_loss': 0,
+                'rtt_min': data_post.json().get('rtt_in_milliseconds'),
+                'rtt_max': data_post.json().get('rtt_in_milliseconds'),
+                'rtt_avg': data_post.json().get('rtt_in_milliseconds'),
+                'rtt_stddev': 0,
+                'results': {
+                    'ip_address': destination,
+                    'rtt': data_post.json().get('rtt_in_milliseconds')
+                }
+            }}
+            return result
+
     def close(self):
         """Close device connection and delete sessioncookie."""
         rest_logout = self._delete(self._login_url)
