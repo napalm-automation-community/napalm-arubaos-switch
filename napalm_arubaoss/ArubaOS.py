@@ -632,6 +632,18 @@ class ArubaOSS(NetworkDriver):
         return ret
 
     def ping(self, destination='', source='', timeout=1, ttl='', size='', count='', vrf=''):
+        """
+        Execute ping on the device and returns a dictionary with the result.
+
+        :param destination: needed argument
+        :param source: not implemented as not available from device
+        :param ttl: not implemented as not available from device
+        :param timeout: not implemented as not available from device
+        :param vrf: not implemented as not available from device
+        :param size: not implemented as not available from device
+        :param count: not implemented as not available from device
+        :return: returns a dictionary containing the hops and probes
+        """
         url = self._api_url + 'ping'
         data = {"destination": {"ip_address": {"version": "IAV_IP_V4", "octets": destination}},
                 "timeout_in_seconds": timeout}
