@@ -77,6 +77,7 @@ class ArubaOSS(NetworkDriver):
         self._cli_url = self._api_url + 'cli'
         self._system_status_url = self._api_url + 'system/status'
         self._ipaddresses_url = self._api_url + 'ipaddresses'
+        self._ping_url = self._api_url + 'ping'
 
         self.cli_output = {}
 
@@ -717,7 +718,14 @@ class ArubaOSS(NetworkDriver):
             else:
                 return False
 
-    def traceroute(self, destination, source='', ttl=255, timeout=2, vrf=''):
+    def traceroute(
+            self,
+            destination,
+            source='',
+            ttl=255,
+            timeout=2,
+            vrf=''
+    ):
         """
         Execute traceroute on the device and returns a dictionary with the result.
 
@@ -761,7 +769,16 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def ping(self, destination='', source='', timeout=1, ttl='', size='', count='', vrf=''):
+    def ping(
+            self,
+            destination,
+            source='',
+            timeout=2,
+            ttl=255,
+            size=100,
+            count=5,
+            vrf=''
+    ):
         """
         Execute ping on the device and returns a dictionary with the result.
 
@@ -774,25 +791,36 @@ class ArubaOSS(NetworkDriver):
         :param count: not implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
-        url = self._api_url + 'ping'
-        data = {"destination": {"ip_address": {"version": "IAV_IP_V4", "octets": destination}},
-                "timeout_in_seconds": timeout}
-        data_post = self._apisession.post(url, json=data)
+        data = {
+            'destination': {
+                'ip_address': {
+                    'version': 'IAV_IP_V4',
+                    "octets": destination
+                }
+            },
+            "timeout_in_seconds": timeout
+        }
+        data_post = self._post(self._ping_url, json=data)
+
         if not data_post.status_code == 200:
             return {'error': 'unknown host {}'.format(destination)}
+
         if 'PR_OK' in data_post.json().get('result'):
-            result = {'success': {
-                'probes_sent': 1,
-                'packet_loss': 0,
-                'rtt_min': data_post.json().get('rtt_in_milliseconds'),
-                'rtt_max': data_post.json().get('rtt_in_milliseconds'),
-                'rtt_avg': data_post.json().get('rtt_in_milliseconds'),
-                'rtt_stddev': 0,
-                'results': {
-                    'ip_address': destination,
-                    'rtt': data_post.json().get('rtt_in_milliseconds')
+            result = {
+                'success': {
+                    'probes_sent': 1,
+                    'packet_loss': 0,
+                    'rtt_min': data_post.json().get('rtt_in_milliseconds'),
+                    'rtt_max': data_post.json().get('rtt_in_milliseconds'),
+                    'rtt_avg': data_post.json().get('rtt_in_milliseconds'),
+                    'rtt_stddev': 0,
+                    'results': {
+                        'ip_address': destination,
+                        'rtt': data_post.json().get('rtt_in_milliseconds')
+                    }
                 }
-            }}
+            }
+
             return result
 
     def close(self):
