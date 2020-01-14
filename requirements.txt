@@ -1,5 +1,4 @@
 napalm>=2.0.0
 netaddr
-requests
-requests-toolbelt
+requests-futures
 textfsm>=1.1.0
