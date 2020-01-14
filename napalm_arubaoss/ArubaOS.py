@@ -450,7 +450,7 @@ class ArubaOSS(NetworkDriver):
         resp = self._get(url)
         if resp.status_code == 200:
             table = []
-            for entry in resp.json()._get('mac_table_entry_element'):
+            for entry in resp.json().get('mac_table_entry_element'):
                 item = {
                     'mac': self._mac_reformat(entry['mac_address']),
                     'interface': entry['port_id'],
@@ -471,7 +471,7 @@ class ArubaOSS(NetworkDriver):
         output = {}
         resp = self._get(self._ipaddresses_url)
         if resp.status_code == 200:
-            for address in resp.json()._get('ip_address_subnet_element'):
+            for address in resp.json().get('ip_address_subnet_element'):
                 iface_name = "VLAN" + str(address['vlan_id'])
                 if iface_name not in output.keys():
                     output[iface_name] = {}
@@ -499,8 +499,8 @@ class ArubaOSS(NetworkDriver):
                 if not neighbor_table.get(port):
                     neighbor_table[port] = []
                 remote_device = {
-                        'hostname': neighbor._get('system_name'),
-                        'port': neighbor._get('port_id')
+                        'hostname': neighbor.get('system_name'),
+                        'port': neighbor.get('port_id')
                         }
                 neighbor_table[port].append(remote_device)
 
@@ -519,18 +519,18 @@ class ArubaOSS(NetworkDriver):
                 if not neighbor_table.get(port):
                     neighbor_table[port] = []
                 remote_device = {
-                    'remote_system_name': neighbor._get('system_name'),
-                    'remote_chassis_id': neighbor._get('chassis_id'),
-                    'remote_port': neighbor._get('port_id'),
+                    'remote_system_name': neighbor.get('system_name'),
+                    'remote_chassis_id': neighbor.get('chassis_id'),
+                    'remote_port': neighbor.get('port_id'),
                     'remote_port_description':
-                        neighbor._get('port_description'),
+                        neighbor.get('port_description'),
                     'remote_system_description':
-                        ''.join(neighbor._get('system_description')),
+                        ''.join(neighbor.get('system_description')),
                     'remote_system_capab':
-                        [k for k, v in neighbor._get(
+                        [k for k, v in neighbor.get(
                             'capabilities_supported').items() if v is True],
                     'remote_system_enable_capab':
-                        [k for k, v in neighbor._get(
+                        [k for k, v in neighbor.get(
                             'capabilities_enabled').items() if v is True]
                     }
                 neighbor_table[port].append(remote_device)
@@ -552,7 +552,7 @@ class ArubaOSS(NetworkDriver):
         resp = self._get(url)
         if resp.status_code == 200:
             output = {}
-            for server in resp.json()._get('ntpServerIp4addr_element'):
+            for server in resp.json().get('ntpServerIp4addr_element'):
                 output[server['ip4addr']['ip4addr_value']] = {}
             return output
 
@@ -744,15 +744,15 @@ class ArubaOSS(NetworkDriver):
             return {'error': 'unknown host {}'.format(destination)}
 
         ret = {'success': {}}
-        ttl_data = data_post.json()._get('ttl_data', [])
+        ttl_data = data_post.json().get('ttl_data', [])
 
         for hop_count in range(len(ttl_data)):
             ret['success'][hop_count + 1] = {'probes': {}}
-            ttl_probe_data = ttl_data[hop_count]._get('ttl_probe_data', [])
+            ttl_probe_data = ttl_data[hop_count].get('ttl_probe_data', [])
             for probe_count in range(len(ttl_probe_data)):
                 try:
                     hostname, _, _ = socket.gethostbyaddr(
-                        ttl_probe_data[probe_count]._get('gateway', {})._get('ip_address', {})._get('octets', '')
+                        ttl_probe_data[probe_count].get('gateway', {}).get('ip_address', {}).get('octets', '')
                     )
                 except socket.herror:  # fetch if nothing can be found
                     hostname = ''
@@ -760,7 +760,7 @@ class ArubaOSS(NetworkDriver):
                 probe = {
                     'rtt': float(ttl_probe_data[probe_count]['probe_time_in_millis']),
                     'ip_address':
-                        ttl_probe_data[probe_count]._get('gateway', {})._get('ip_address', {})._get('octets', ''),
+                        ttl_probe_data[probe_count].get('gateway', {}).get('ip_address', {}).get('octets', ''),
                     'hostname': hostname
                 }
 
