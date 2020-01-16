@@ -1,3 +1,5 @@
+"""Execute traceroute on the device and returns a dictionary with the result."""
+
 import socket
 import logging
 

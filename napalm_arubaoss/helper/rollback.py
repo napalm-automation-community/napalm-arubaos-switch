@@ -1,3 +1,5 @@
+"""Rollback configuration."""
+
 import logging
 
 from napalm_arubaoss.helper.utils import commit_candidate

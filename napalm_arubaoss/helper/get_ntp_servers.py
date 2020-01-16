@@ -1,3 +1,5 @@
+"""Get NTP servers."""
+
 import logging
 
 from napalm_arubaoss.helper.base import Connection

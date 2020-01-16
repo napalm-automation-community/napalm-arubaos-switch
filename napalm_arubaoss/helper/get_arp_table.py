@@ -1,3 +1,5 @@
+"""Backups and commit the configuration, and handles commit confirm."""
+
 from napalm.base.helpers import textfsm_extractor
 import logging
 

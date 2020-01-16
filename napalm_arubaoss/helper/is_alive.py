@@ -1,3 +1,5 @@
+"""Check if device connection is alive."""
+
 from napalm_arubaoss.helper.base import Connection
 from napalm.base.exceptions import ConnectionClosedException
 import logging

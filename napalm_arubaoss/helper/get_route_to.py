@@ -1,3 +1,5 @@
+"""Get route to destination."""
+
 from napalm.base.helpers import textfsm_extractor
 from netaddr import IPNetwork
 import logging

@@ -1,3 +1,4 @@
+"""Create the Session."""
 from requests_futures.sessions import FuturesSession
 from requests.models import Response
 from concurrent.futures import as_completed
@@ -12,10 +13,13 @@ logger = logging.getLogger('arubaoss.helper.base')
 
 
 class Connection:
+    """Connection class."""
+
     _apisession = FuturesSession()
     config = {'api_url': ''}
 
     def __init__(self):
+        """Initialize the class."""
         self.hostname = ''
         self.username = ''
         self.password = ''
@@ -33,6 +37,16 @@ class Connection:
             timeout=10,
             optional_args=None
     ):
+        """
+        Login to the Rest-API.
+
+        :param hostname:
+        :param username:
+        :param password:
+        :param timeout:
+        :param optional_args:
+        :return:
+        """
         logger.debug('logging in')
         self.hostname = hostname
         self.username = username
@@ -198,5 +212,11 @@ class Connection:
         return callback
 
     def run_cmd(self, cmd):
+        """
+        Run the command on the device and return the raw output.
+
+        :param cmd:
+        :return:
+        """
         ret = self.cli([cmd])
         return ret[cmd]

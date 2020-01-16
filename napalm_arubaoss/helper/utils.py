@@ -1,3 +1,5 @@
+"""Implement all utilities used by other modules."""
+
 import base64
 import logging
 from time import sleep
@@ -12,6 +14,12 @@ connection = Connection()
 
 
 def read_candidate(candidate):
+    """
+    Open the candidate config.
+
+    :param candidate:
+    :return:
+    """
     with open(candidate) as candidate_config:
         return ''.join(candidate_config.readlines())
 
@@ -24,6 +32,12 @@ def str_to_b64(spayload):
 
 
 def config_batch(cmd_list):
+    """
+    WRITE SOMETHING MEANINGFUL.
+
+    :param cmd_list:
+    :return:
+    """
     url = connection.config['api_url'] + 'cli_batch'
     data = {
         'cli_batch_base64_encoded': str_to_b64('\n'.join(cmd_list))
@@ -80,6 +94,12 @@ def backup_config(config='running', destination='backup'):
 
 
 def transaction_status(url):
+    """
+    WRITE SOMETHING MEANINGFUL.
+
+    :param url:
+    :return:
+    """
     status = 'CRS_IN_PROGRESS'
     elapsed = 0
     while status == 'CRS_IN_PROGRESS' and elapsed < connection.timeout:
@@ -110,6 +130,12 @@ def commit_candidate(config):
 
 
 def mac_reformat(mac):
+    """
+    Reformat the Mac-Address.
+
+    :param mac:
+    :return:
+    """
     t = iter(mac.replace("-", ""))
 
     return ':'.join(a+b for a, b in zip_longest(t, t, fillvalue=""))

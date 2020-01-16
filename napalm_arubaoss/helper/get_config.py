@@ -1,3 +1,5 @@
+"""Get configuration stored on the device."""
+
 import logging
 
 from napalm_arubaoss.helper.base import Connection

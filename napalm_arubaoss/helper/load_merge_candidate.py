@@ -1,3 +1,5 @@
+"""Merge candidate configuration with the running one."""
+
 from napalm.base.exceptions import MergeConfigException
 import logging
 

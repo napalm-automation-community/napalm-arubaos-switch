@@ -1,3 +1,5 @@
+"""Replace running config with the candidate."""
+
 from napalm_arubaoss.helper.base import Connection
 from napalm.base.exceptions import ReplaceConfigException
 import logging

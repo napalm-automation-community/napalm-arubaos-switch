@@ -1,3 +1,5 @@
+"""Get the mac-address table of the device."""
+
 import logging
 
 from napalm_arubaoss.helper.base import Connection

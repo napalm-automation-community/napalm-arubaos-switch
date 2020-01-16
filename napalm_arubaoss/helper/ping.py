@@ -1,3 +1,5 @@
+"""Execute ping on the device and returns a dictionary with the result."""
+
 from napalm_arubaoss.helper.base import Connection
 import logging
 
@@ -7,6 +9,13 @@ connection = Connection()
 
 
 def ping(destination, timeout=2):
+    """
+    Execute ping on the device and returns a dictionary with the result.
+
+    :param destination: needed argument
+    :param timeout: not implemented as not available from device
+    :return: returns a dictionary containing the hops and probes
+    """
     url = connection.config['api_url'] + 'ping'
     data = {
         'destination': {

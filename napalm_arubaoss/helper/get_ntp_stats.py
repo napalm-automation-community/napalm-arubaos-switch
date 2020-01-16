@@ -1,3 +1,5 @@
+"""Get NTP peer statistics."""
+
 import logging
 
 from napalm_arubaoss.helper.base import Connection

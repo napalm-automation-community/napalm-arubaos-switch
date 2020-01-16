@@ -1,3 +1,5 @@
+"""Get IP interface IP addresses."""
+
 from netaddr import IPNetwork
 import logging
 

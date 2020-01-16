@@ -1,3 +1,5 @@
+"""Backups and commit the configuration, and handles commit confirm."""
+
 import logging
 from napalm.base.exceptions import CommandErrorException
 

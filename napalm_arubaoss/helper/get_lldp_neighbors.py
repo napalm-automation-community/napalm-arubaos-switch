@@ -1,3 +1,5 @@
+"""Get a list of LLDP neighbors."""
+
 import logging
 
 from napalm_arubaoss.helper.base import Connection

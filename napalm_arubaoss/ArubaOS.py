@@ -1,5 +1,4 @@
 """ArubaOS-Switch Napalm driver."""
-
 import logging
 import urllib3
 
@@ -70,7 +69,6 @@ class ArubaOSS(NetworkDriver):
 
     def open(self):
         """Open connection to the network device."""
-
         self.connection.login(
             hostname=self.hostname,
             username=self.username,
