@@ -17,6 +17,7 @@ from napalm_arubaoss.helper import (
     get_ntp_stats,
     get_ntp_servers,
     get_route_to,
+    is_alive,
     load_merge_candidate,
     load_replace_candidate,
     ping,
@@ -67,60 +68,130 @@ class ArubaOSS(NetworkDriver):
 
         self.connection = Connection()
 
-    def open(self):
-        """Open connection to the network device."""
-        self.connection.login(
-            hostname=self.hostname,
-            username=self.username,
-            password=self.password,
-            timeout=self.timeout,
-            optional_args=self.optional_args
-        )
-
-        return True
-
-    def load_replace_candidate(self, filename=None, config=None):
-        """Replace running config with the candidate."""
-        """ Implentation of napalm module load_replace_candidate()
-        ArubaOS-Switch supports payload_type options:
-            - "RPT_PATCH_FILE" -> not implemented
-            - "RPT_BACKUP_FILE" -> Implemented
-
-        Note: the maximum content_length = 16072,
-        "HTTP/1.1 413 Request Entity Too Large" is returned above that!!!
-        """
-        ret = load_replace_candidate(filename=filename, config=config)
-
-        return ret
-
-    def load_merge_candidate(self, filename=None, config=None):
-        """Merge candidate configuration with the running one."""
-        """
-        Imperative config change:
-         Merge new config with existing one. There's no config validation
-         nor atomic commit!. Only configuration commands are supported,
-         "configure terminal" is not required. Use with caution.
-
-        """
-        ret = load_merge_candidate(filename=filename, config=config)
-
-        return ret
-
     def cli(self, commands):
-        """Run CLI commands through the REST API."""
+        """
+        Run CLI commands through the REST API.
+
+        :param commands:
+        :return:
+        """
         ret = self.connection.cli(commands)
 
         return ret
 
+    def close(self):
+        """
+        Close device connection and delete sessioncookie.
+
+        :return:
+        """
+        ret = self.connection.logout()
+
+        return ret
+
+    def commit_config(self, message=None, confirm=0):
+        """
+        Backups and commit the configuration, and handles commit confirm.
+
+        :param message:
+        :param confirm:
+        :return:
+        """
+        ret = commit_config(confirm=confirm)
+
+        return ret
+
+    def compare_config(self):
+        """
+        Compare the running config with the candidate one.
+
+        :return:
+        """
+        ret = compare_config()
+
+        return ret
+
+    def compliance_report(self, validation_file=None, validation_source=None):
+        """
+        Get Compliance report - NOT IMPLEMENTED.
+
+        :param validation_file:
+        :param validation_source:
+        :return:
+        """
+        return super(ArubaOSS, self).compliance_report()
+
+    def connection_tests(self):
+        """
+        Show connection tests - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).connection_tests()
+
+    def discard_config(self):
+        """
+        Discard the candidate configuration.
+
+        :return:
+        """
+        backup_config(destination='REST_Payload_Backup')
+
     def get_arp_table(self, *args, **kwargs):
-        """Get device's ARP table."""
+        """
+        Get device's ARP table.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         ret = get_arp_table(self_obj=self)
 
         return ret
 
-    def get_environment(self):
-        """Get environment readings."""
+    def get_bgp_config(self, group='', neighbor=''):
         """
+        Get BGP config - NOT IMPLEMENTED.
+
+        :param group:
+        :param neighbor:
+        :return:
+        """
+        return super(ArubaOSS, self).get_bgp_config()
+
+    def get_bgp_neighbors(self):
+        """
+        Get BGP neighbors - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).get_bgp_neighbors()
+
+    def get_bgp_neighbors_detail(self, neighbor_address=''):
+        """
+        Get BGP Neighbors detail - NOT IMPLEMENTED.
+
+        :param neighbor_address:
+        :return:
+        """
+        return super(ArubaOSS, self).get_bgp_neighbors_detail()
+
+    def get_config(self, retrieve='all', full=False):
+        """
+        Get configuration stored on the device.
+
+        :param retrieve:
+        :param full:
+        :return:
+        """
+        ret = get_config(retrieve=retrieve)
+
+        return ret
+
+    def get_environment(self):
+        """
+        Get environment readings.
+
         Currently (API v7) the API does not support reading information about
         fans, temperature, power or CPU.
         A textfsm template needs to be created to parse:
@@ -129,6 +200,8 @@ class ArubaOSS(NetworkDriver):
          - show system power-consumption
          - show system power-supply
          - show system information (CPU/MEM)
+
+        :return:
         """
         output = {
             "fans": {},
@@ -140,88 +213,162 @@ class ArubaOSS(NetworkDriver):
 
         return output
 
-    def get_config(self, retrieve='all', full=False):
-        """Get configuration stored on the device."""
-        ret = get_config(retrieve=retrieve)
-
-        return ret
-
     def get_facts(self):
-        """Get general device information."""
+        """
+        Get general device information.
+
+        :return:
+        """
         ret = get_facts()
 
         return ret
 
-    def discard_config(self):
-        """Discard the candidate configuration."""
-        backup_config(destination='REST_Payload_Backup')
+    def get_firewall_policies(self):
+        """
+        Get firewall policies - NOT IMPLEMENTED.
 
-    def compare_config(self):
-        """Compare the running config with the candidate one."""
-        ret = compare_config()
+        :return:
+        """
+        return super(ArubaOSS, self).get_firewall_policies()
 
-        return ret
+    def get_interfaces(self):
+        """
+        Get interfaces - NOT IMPLEMENTED.
 
-    def commit_config(self, message=None, confirm=0):
-        """Backups and commit the configuration, and handles commit confirm."""
-        ret = commit_config(confirm=confirm)
+        :return:
+        """
+        return super(ArubaOSS, self).get_interfaces()
 
-        return ret
+    def get_interfaces_counters(self):
+        """
+        Get interfaces counters - NOT IMPLEMENTED.
 
-    def get_mac_address_table(self):
-        """Get the mac-address table of the device."""
-        ret = get_mac_address_table()
-
-        return ret
+        :return:
+        """
+        return super(ArubaOSS, self).get_interfaces_counters()
 
     def get_interfaces_ip(self):
-        """Get IP interface IP addresses."""
-        "Looks like there's a bug n ArubaOS and is not returning IPv6"
+        """
+        Get IP interface IP addresses.
+
+        Looks like there's a bug n ArubaOS and is not returning IPv6
+
+        :return:
+        """
         ret = get_interfaces_ip()
 
         return ret
 
+    def get_ipv6_neighbors_table(self):
+        """
+        Get IPv6 neighbors table - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).get_ipv6_neighbors_table()
+
     def get_lldp_neighbors(self):
-        """Get a list of LLDP neighbors."""
+        """
+        Get a list of LLDP neighbors.
+
+        :return:
+        """
         ret = get_lldp_neighbors()
 
         return ret
 
     def get_lldp_neighbors_detail(self, *args, **kwargs):
-        """Get LLDP neighbor information."""
+        """
+        Get LLDP neighbor information.
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
         ret = get_lldp_neighbors_detail(*args, **kwargs)
 
         return ret
 
-    def get_ntp_peers(self):
-        """Get NTP peers."""
+    def get_mac_address_table(self):
         """
+        Get the mac-address table of the device.
+
+        :return:
+        """
+        ret = get_mac_address_table()
+
+        return ret
+
+    def get_network_instances(self, name=''):
+        """
+        Get network instances - NOT IMPLEMENTED.
+
+        :param name:
+        :return:
+        """
+        return super(ArubaOSS, self).get_network_instances()
+
+    def get_ntp_peers(self):
+        """
+        Get NTP peers.
+
         ArubaOS does not support NTP "peers", just upstream servers.
         This method is just an alias of get_ntp_servers()
+
+        :return:
         """
         ret = get_ntp_servers()
 
         return ret
 
     def get_ntp_servers(self):
-        """Get NTP servers."""
-        " TO-DO: add IPv6 support, currently getting 404 from the API"
+        """
+        Get NTP servers.
+
+        TO-DO: add IPv6 support, currently getting 404 from the API
+
+        :return:
+        """
         ret = get_ntp_servers()
 
         return ret
 
     def get_ntp_stats(self):
-        """Get NTP peer statistics."""
+        """
+        Get NTP peer statistics.
+
+        :return:
+        """
         ret = get_ntp_stats()
 
         return ret
 
     def get_optics(self):
-        """Transceiver output/input readings. We need to parse CLI."""
-        """ CMDs:
-         - show interfaces transceiver detail
         """
-        return super().get_optics()
+        Transceiver output/input readings. We need to parse CLI.
+
+        CMDs:
+         - show interfaces transceiver detail
+
+        :return:
+        """
+        return super(ArubaOSS, self).get_optics()
+
+    def get_probes_config(self):
+        """
+        Get probes config - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).get_probes_config()
+
+    def get_probes_results(self):
+        """
+        Get probes results - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).get_probes_results()
 
     def get_route_to(self, destination='', protocol=''):
         """
@@ -239,32 +386,102 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def rollback(self):
-        """Rollback configuration."""
-        ret = rollback()
+    def get_snmp_information(self):
+        """
+        Get SNMP information - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).get_snmp_information()
+
+    def get_users(self):
+        """
+        Get users - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).get_users()
+
+    def is_alive(self):
+        """
+        Is alive - NOT IMPLEMENTED.
+
+        :return:
+        """
+        ret = is_alive()
 
         return ret
 
-    def traceroute(
+    def load_merge_candidate(self, filename=None, config=None):
+        """
+        Merge candidate configuration with the running one.
+
+        Imperative config change:
+         Merge new config with existing one. There's no config validation
+         nor atomic commit!. Only configuration commands are supported,
+         "configure terminal" is not required. Use with caution.
+
+        :param filename:
+        :param config:
+        :return:
+        """
+        ret = load_merge_candidate(filename=filename, config=config)
+
+        return ret
+
+    def load_replace_candidate(self, filename=None, config=None):
+        """
+        Replace running config with the candidate.
+
+        Implentation of napalm module load_replace_candidate()
+        ArubaOS-Switch supports payload_type options:
+            - "RPT_PATCH_FILE" -> not implemented
+            - "RPT_BACKUP_FILE" -> Implemented
+
+        Note: the maximum content_length = 16072,
+        "HTTP/1.1 413 Request Entity Too Large" is returned above that!!!
+
+        :param filename:
+        :param config:
+        :return:
+        """
+        ret = load_replace_candidate(filename=filename, config=config)
+
+        return ret
+
+    def load_template(
             self,
-            destination,
-            source='',
-            ttl=255,
-            timeout=2,
-            vrf=''
+            template_name,
+            template_source=None,
+            template_path=None,
+            **template_vars
     ):
         """
-        Execute traceroute on the device and returns a dictionary with the result.
+        Load template - NOT IMPLEMENTED.
 
-        :param destination: needed argument
-        :param source: not implemented as not available from device
-        :param ttl: not implemented as not available from device
-        :param timeout: not implemented as not available from device
-        :param vrf: not implemented as not available from device
-        :return: returns a dictionary containing the hops and probes
+        :param template_name:
+        :param template_source:
+        :param template_path:
+        :param template_vars:
+        :return:
         """
-        ret = traceroute(destination=destination)
-        return ret
+        pass
+
+    def open(self):
+        """
+        Open connection to the network device.
+
+        :return:
+        """
+        self.connection.login(
+            hostname=self.hostname,
+            username=self.username,
+            password=self.password,
+            timeout=self.timeout,
+            optional_args=self.optional_args
+        )
+
+        return True
 
     def ping(
             self,
@@ -291,7 +508,50 @@ class ArubaOSS(NetworkDriver):
         ret = ping(destination=destination, timeout=timeout)
         return ret
 
-    def close(self):
-        """Close device connection and delete sessioncookie."""
-        ret = self.connection.logout()
+    def post_connection_tests(self):
+        """
+        Post connection tests - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).post_connection_tests()
+
+    def pre_connection_tests(self):
+        """
+        Pre connection tests - NOT IMPLEMENTED.
+
+        :return:
+        """
+        return super(ArubaOSS, self).pre_connection_tests()
+
+    def rollback(self):
+        """
+        Rollback configuration.
+
+        :return:
+        """
+        ret = rollback()
+
+        return ret
+
+    def traceroute(
+            self,
+            destination,
+            source='',
+            ttl=255,
+            timeout=2,
+            vrf=''
+    ):
+        """
+        Execute traceroute on the device and returns a dictionary with the result.
+
+        :param destination: needed argument
+        :param source: not implemented as not available from device
+        :param ttl: not implemented as not available from device
+        :param timeout: not implemented as not available from device
+        :param vrf: not implemented as not available from device
+        :return: returns a dictionary containing the hops and probes
+        """
+        ret = traceroute(destination=destination)
+
         return ret
