@@ -100,6 +100,7 @@ class Connection:
         if not rest_logout.status_code == 204:
             logger.debug("Logout Failed")
         else:
+            self._apisession.close()
             return "logout ok"
 
     def get(self, *args, **kwargs) -> Response:
