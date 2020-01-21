@@ -94,7 +94,7 @@ class Connection:
         """Close device connection and delete sessioncookie."""
         url = self.config['api_url'] + 'login-sessions'
 
-        rest_logout = self.delete(url)
+        rest_logout = self.delete(url, timeout=self.timeout)
         self._apisession.headers['cookie'] = ''
 
         if not rest_logout.status_code == 204:
@@ -165,6 +165,8 @@ class Connection:
             self._apisession.post(
                 url=url,
                 json={'cmd': command},
+                timeout=self.timeout,
+                headers={'Content-Type': 'application/json', 'Connection': 'close'},
                 hooks={
                     'response': self._callback(
                         output=self.cli_output,
@@ -189,7 +191,7 @@ class Connection:
         :return: callback function
         """
         def callback(call, *cargs, **ckwargs):
-            self.cli_output = kwargs.get('output')
+            cli_output = kwargs.get('output')
             passed_cmd = kwargs.get('command')
             try:
                 json_ret = call.json()
@@ -200,15 +202,15 @@ class Connection:
             result_base64 = json_ret.get('result_base64_encoded', '')
 
             if not cmd == passed_cmd:
-                self.cli_output[passed_cmd] = 'cmd not found in output'
+                cli_output[passed_cmd] = 'cmd not found in output'
                 return
 
             if not result_base64:
-                self.cli_output[passed_cmd] = 'no result found in output'
+                cli_output[passed_cmd] = 'no result found in output'
                 return
 
             result = base64.b64decode(result_base64).decode('utf-8')
-            self.cli_output[passed_cmd] = result
+            cli_output[passed_cmd] = result
 
         return callback
 
