@@ -47,6 +47,8 @@ class Connection:
         :param optional_args:
         :return:
         """
+        if optional_args.get('max_workers'):
+            self._apisession = FuturesSession(max_workers=optional_args.get('max_workers', 8))
         logger.debug('logging in')
         self.hostname = hostname
         self.username = username
