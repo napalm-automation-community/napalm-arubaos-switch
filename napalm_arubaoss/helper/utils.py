@@ -33,7 +33,7 @@ def str_to_b64(spayload):
 
 def config_batch(cmd_list):
     """
-    WRITE SOMETHING MEANINGFUL.
+    Load a batch of configuration commands into the running-config.
 
     :param cmd_list:
     :return:
@@ -95,7 +95,7 @@ def backup_config(config='running', destination='backup'):
 
 def transaction_status(url):
     """
-    WRITE SOMETHING MEANINGFUL.
+    Wait for the requested transaction to finish within the specified timeout.
 
     :param url:
     :return:
@@ -131,7 +131,7 @@ def commit_candidate(config):
 
 def mac_reformat(mac):
     """
-    Reformat the Mac-Address.
+    Reformat the MAC addresses to standard notation.
 
     :param mac:
     :return:

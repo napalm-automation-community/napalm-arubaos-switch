@@ -70,7 +70,6 @@ class Connection:
 
         self._apisession.verify = optional_args.get("ssl_verify", True)
         self._apisession.headers = {'Content-Type': 'application/json'}
-        # bug #4 - random delay while re-using TCP connection - workaround:
         self._apisession.keep_alive = optional_args.get("keepalive", True)
 
         params = {
@@ -166,6 +165,8 @@ class Connection:
                 url=url,
                 json={'cmd': command},
                 timeout=self.timeout,
+                # bug #4 - random delay while re-using TCP connection - workaround:
+                # always close the TCP connection
                 headers={'Content-Type': 'application/json', 'Connection': 'close'},
                 hooks={
                     'response': self._callback(

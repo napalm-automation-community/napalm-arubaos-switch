@@ -31,7 +31,8 @@ def get_facts():
         call = connection.get(dns_url)
         if call.ok:
             rest_out = call.json()
-            out['fqdn'] = out['hostname'] + "." + rest_out['dns_domain_names'][0]
+            # return "{{hostname}}." if no domain is configured
+            out['fqdn'] = out['hostname'] + "." + rest_out.get('dns_domain_names', '.')[0]
 
     # Get interface list
     call = connection.get(switch_status_url)

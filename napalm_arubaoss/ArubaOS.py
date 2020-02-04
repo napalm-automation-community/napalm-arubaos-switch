@@ -190,7 +190,7 @@ class ArubaOSS(NetworkDriver):
 
     def get_environment(self):
         """
-        Get environment readings.
+        Get environment readings - NOT IMPLEMENTED.
 
         Currently (API v7) the API does not support reading information about
         fans, temperature, power or CPU.
@@ -202,7 +202,6 @@ class ArubaOSS(NetworkDriver):
          - show system information (CPU/MEM)
 
         :return:
-        """
         output = {
             "fans": {},
             "temperature": {},
@@ -210,8 +209,8 @@ class ArubaOSS(NetworkDriver):
             "cpu": {},
             "memory": {}
         }
-
-        return output
+        """
+        return super(ArubaOSS, self).get_environment()
 
     def get_facts(self):
         """
@@ -251,7 +250,7 @@ class ArubaOSS(NetworkDriver):
         """
         Get IP interface IP addresses.
 
-        Looks like there's a bug n ArubaOS and is not returning IPv6
+        Looks like there's a bug on ArubaOS and is not returning IPv6
 
         :return:
         """
@@ -404,7 +403,7 @@ class ArubaOSS(NetworkDriver):
 
     def is_alive(self):
         """
-        Is alive - NOT IMPLEMENTED.
+        Is alive method.
 
         :return:
         """
@@ -465,7 +464,7 @@ class ArubaOSS(NetworkDriver):
         :param template_vars:
         :return:
         """
-        pass
+        return super(ArubaOSS, self).load_template()
 
     def open(self):
         """
