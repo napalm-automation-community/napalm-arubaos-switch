@@ -30,7 +30,7 @@ def get_facts():
         rest_out = call.json()
         out['hostname'] = rest_out['name']
         out['os_version'] = rest_out['firmware_version']
-        out['serial_number'] = rest_out['serial_number']
+        out['serial_number'] = rest_out.get('serial_number', '')
         out['model'] = rest_out['product_model']
 
         # get domain name to generate the FQDN
@@ -45,6 +45,12 @@ def get_facts():
     call = connection.get(switch_status_url)
     if call.ok:
         rest_out = call.json()
+        if rest_out.get('switch_type', 'ST_STANDALONE') == 'ST_STACKED':
+            serial_url = connection.config['api_url'] +\
+                'system/status/members/1'
+            call = connection.get(serial_url)
+            if call.ok:
+                out['serial_number'] = call.json().get('serial_number')
         for blade in rest_out['blades']:
             for ports in blade['data_ports']:
                 out['interface_list'].append(ports['port_name'])

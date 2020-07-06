@@ -30,7 +30,9 @@ from napalm.base.base import NetworkDriver
 logger = logging.getLogger('arubaoss')
 logger.setLevel(logging.INFO)
 
-stream_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
 
 streamhandler = logging.StreamHandler()
 streamhandler.setFormatter(stream_formatter)
@@ -542,7 +544,7 @@ class ArubaOSS(NetworkDriver):
             vrf=''
     ):
         """
-        Execute traceroute on the device and returns a dictionary with the result.
+        Executes traceroute on the device.
 
         :param destination: needed argument
         :param source: not implemented as not available from device
