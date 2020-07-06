@@ -31,7 +31,7 @@ def get_facts():
         out['hostname'] = rest_out['name']
         out['os_version'] = rest_out['firmware_version']
         out['serial_number'] = rest_out.get('serial_number', '')
-        out['model'] = rest_out['product_model']
+        out['model'] = rest_out.get('product_model', '')
 
         # get domain name to generate the FQDN
         call = connection.get(dns_url)
@@ -51,6 +51,7 @@ def get_facts():
             call = connection.get(serial_url)
             if call.ok:
                 out['serial_number'] = call.json().get('serial_number')
+                out['model'] = call.json().get('product_model')
         for blade in rest_out['blades']:
             for ports in blade['data_ports']:
                 out['interface_list'].append(ports['port_name'])
