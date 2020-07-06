@@ -544,7 +544,7 @@ class ArubaOSS(NetworkDriver):
             vrf=''
     ):
         """
-        Executes traceroute on the device.
+        Execute traceroute on the device.
 
         :param destination: needed argument
         :param source: not implemented as not available from device
