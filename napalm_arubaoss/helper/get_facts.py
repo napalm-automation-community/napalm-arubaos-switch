@@ -20,6 +20,12 @@ def get_facts():
     }
 
     call = connection.get(system_status_url)
+
+    # If it's a Stack, use `/system/status/global_info`
+    if call.status_code == 404:
+        system_status_url = connection.config['api_url'] +\
+            'system/status/global_info'
+        call = connection.get(system_status_url)
     if call.ok:
         rest_out = call.json()
         out['hostname'] = rest_out['name']
@@ -32,7 +38,8 @@ def get_facts():
         if call.ok:
             rest_out = call.json()
             # return "{{hostname}}." if no domain is configured
-            out['fqdn'] = out['hostname'] + "." + rest_out.get('dns_domain_names', '.')[0]
+            out['fqdn'] = out['hostname'] + "." +\
+                rest_out.get('dns_domain_names', '.')[0]
 
     # Get interface list
     call = connection.get(switch_status_url)
