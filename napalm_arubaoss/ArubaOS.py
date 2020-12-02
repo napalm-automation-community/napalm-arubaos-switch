@@ -1,22 +1,24 @@
 """ArubaOS-Switch Napalm driver."""
 import logging
-import urllib3
 
-from napalm_arubaoss.helper.base import Connection
+from napalm.base.base import NetworkDriver
+
 from napalm_arubaoss.helper import (
     backup_config,
     commit_config,
     compare_config,
-    get_mac_address_table,
-    get_facts,
+    confirm_commit,
     get_arp_table,
     get_config,
+    get_facts,
     get_interfaces_ip,
     get_lldp_neighbors,
     get_lldp_neighbors_detail,
-    get_ntp_stats,
+    get_mac_address_table,
     get_ntp_servers,
+    get_ntp_stats,
     get_route_to,
+    has_pending_commit,
     is_alive,
     load_merge_candidate,
     load_replace_candidate,
@@ -24,8 +26,9 @@ from napalm_arubaoss.helper import (
     rollback,
     traceroute
 )
+from napalm_arubaoss.helper.base import Connection
 
-from napalm.base.base import NetworkDriver
+import urllib3
 
 logger = logging.getLogger('arubaoss')
 logger.setLevel(logging.INFO)
@@ -91,7 +94,7 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def commit_config(self, message=None, confirm=0):
+    def commit_config(self, message="", revert_in=0):
         """
         Backups and commit the configuration, and handles commit confirm.
 
@@ -99,7 +102,7 @@ class ArubaOSS(NetworkDriver):
         :param confirm:
         :return:
         """
-        ret = commit_config(confirm=confirm)
+        ret = commit_config(revert_in=revert_in)
 
         return ret
 
@@ -122,6 +125,17 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         return super(ArubaOSS, self).compliance_report()
+
+    def confirm_commit(self):
+        """
+        Confirm the changes requested via commit_config when
+        `type(revert_in)=int`.
+
+        Should cause self.has_pending_commit to return False when done.
+        """
+        ret = confirm_commit()
+
+        return ret
 
     def connection_tests(self):
         """
@@ -402,6 +416,15 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         return super(ArubaOSS, self).get_users()
+
+    def has_pending_commit(self):
+        """
+        :return Boolean indicating if a commit_config that needs confirmed
+        is in process.
+        """
+        ret = has_pending_commit()
+
+        return ret
 
     def is_alive(self):
         """

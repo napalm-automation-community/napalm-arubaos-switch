@@ -165,9 +165,12 @@ class Connection:
                 url=url,
                 json={'cmd': command},
                 timeout=self.timeout,
-                # bug #4 - random delay while re-using TCP connection - workaround:
-                # always close the TCP connection
-                headers={'Content-Type': 'application/json', 'Connection': 'close'},
+                # bug #4 - random delay while re-using TCP connection
+                # workaround: always close the TCP connection
+                headers={
+                    'Content-Type': 'application/json',
+                    'Connection': 'close'
+                    },
                 hooks={
                     'response': self._callback(
                         output=self.cli_output,
