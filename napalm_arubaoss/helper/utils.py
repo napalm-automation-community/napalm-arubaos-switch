@@ -122,7 +122,7 @@ def commit_candidate(connection, config):
     if not cmd_post.json()['failure_reason']:
         check_url = url + '/status'
 
-        return transaction_status(check_url)
+        return transaction_status(connection=connection, url=check_url)
 
 
 def mac_reformat(mac):

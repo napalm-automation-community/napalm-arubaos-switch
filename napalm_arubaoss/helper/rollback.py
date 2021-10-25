@@ -16,7 +16,7 @@ def rollback(connection):
                 len(diff.get('diff_add_list')) and
                 len(diff.get('diff_remove_list'))
         ):
-            commit_candidate(config='backup_running')
+            commit_candidate(connection=connection, config='backup_running')
 
             return True
         else:
