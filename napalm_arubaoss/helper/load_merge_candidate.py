@@ -18,7 +18,7 @@ def load_merge_candidate(connection, filename=None, config=None):
 
     """
     if filename:
-        config = read_candidate(connection=connection, candidate=filename)
+        config = read_candidate(candidate=filename)
 
     if config is not None:
         if isinstance(config, str):
