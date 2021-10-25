@@ -1,14 +1,11 @@
 """Execute ping on the device and returns a dictionary with the result."""
 
-from napalm_arubaoss.helper.base import Connection
 import logging
 
 logger = logging.getLogger('arubaoss.helper.ping')
 
-connection = Connection()
 
-
-def ping(destination, timeout=2):
+def ping(connection, destination, timeout=2):
     """
     Execute ping on the device and returns a dictionary with the result.
 

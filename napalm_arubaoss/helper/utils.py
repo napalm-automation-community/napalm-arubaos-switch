@@ -6,11 +6,7 @@ from time import sleep
 from itertools import zip_longest
 from napalm.base.exceptions import CommandTimeoutException
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger('arubaoss.helper.utils')
-
-connection = Connection()
 
 
 def read_candidate(candidate):
@@ -31,7 +27,7 @@ def str_to_b64(spayload):
     return payload_b64.decode('utf-8')
 
 
-def config_batch(cmd_list):
+def config_batch(connection, cmd_list):
     """
     Load a batch of configuration commands into the running-config.
 
@@ -60,7 +56,7 @@ def config_batch(cmd_list):
         return True
 
 
-def backup_config(config='running', destination='backup'):
+def backup_config(connection, config='running', destination='backup'):
     """Backup config."""
     """Supported configs
     API:
@@ -93,7 +89,7 @@ def backup_config(config='running', destination='backup'):
         return cmd_post.json()
 
 
-def transaction_status(url):
+def transaction_status(connection, url):
     """
     Wait for the requested transaction to finish within the specified timeout.
 
@@ -113,7 +109,7 @@ def transaction_status(url):
         raise CommandTimeoutException("Transaction timed out")
 
 
-def commit_candidate(config):
+def commit_candidate(connection, config):
     """Commit the candidate configuration."""
     url = connection.config['api_url'] + 'system/config/cfg_restore'
     data = {

@@ -15,7 +15,6 @@ logger = logging.getLogger('arubaoss.helper.base')
 class Connection:
     """Connection class."""
 
-    _apisession = FuturesSession()
     config = {'api_url': ''}
 
     def __init__(self):
@@ -26,6 +25,8 @@ class Connection:
         self.timeout = 10
         self.api = 'v6'
         self.proto = 'https'
+
+        self._apisession = FuturesSession()
 
         self.cli_output = {}
 

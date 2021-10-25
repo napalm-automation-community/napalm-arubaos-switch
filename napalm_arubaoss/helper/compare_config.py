@@ -7,10 +7,8 @@ from napalm_arubaoss.helper.base import Connection
 
 logger = logging.getLogger('arubaoss.helper.compare_config')
 
-connection = Connection()
 
-
-def compare_config():
+def compare_config(connection):
     """Compare the running config with the candidate one."""
     url = connection.config['api_url'] + 'system/config/cfg_restore/latest_diff'
     check_url = url + '/status'

@@ -2,14 +2,10 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger('arubaoss.helper.get_lldp_neighbors_detail')
 
-connection = Connection()
 
-
-def get_lldp_neighbors_detail(*args, **kwargs):
+def get_lldp_neighbors_detail(connection, *args, **kwargs):
     """Get LLDP neighbor information."""
     url = connection.config['api_url'] + '/lldp/remote-device'
     resp = connection.get(url)

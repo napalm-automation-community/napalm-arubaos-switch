@@ -3,15 +3,12 @@
 from napalm.base.helpers import textfsm_extractor
 import logging
 
-from napalm_arubaoss.helper.base import Connection
 from napalm_arubaoss.helper.utils import mac_reformat
 
 logger = logging.getLogger('arubaoss.helper.get_arp_table')
 
-connection = Connection()
 
-
-def get_arp_table(self_obj=None, *args, **kwargs):
+def get_arp_table(connection, self_obj=None, *args, **kwargs):
     """Get device's ARP table."""
     if not self_obj:
         return []

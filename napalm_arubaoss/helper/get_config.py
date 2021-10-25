@@ -2,14 +2,10 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger('arubaoss.helper.get_config')
 
-connection = Connection()
 
-
-def get_config(retrieve='all'):
+def get_config(connection, retrieve='all'):
     """Get configuration stored on the device."""
     out = {'startup': '', 'candidate': '', 'running': ''}
 

@@ -8,9 +8,9 @@ from napalm_arubaoss.helper.compare_config import compare_config
 logger = logging.getLogger('arubaoss.helper.rollback')
 
 
-def rollback():
+def rollback(connection):
     """Rollback configuration."""
-    diff = compare_config()
+    diff = compare_config(connection=connection)
     if diff and isinstance(diff, dict):
         if not (
                 len(diff.get('diff_add_list')) and

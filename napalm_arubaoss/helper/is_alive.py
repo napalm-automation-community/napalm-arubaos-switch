@@ -1,15 +1,12 @@
 """Check if device connection is alive."""
 
-from napalm_arubaoss.helper.base import Connection
 from napalm.base.exceptions import ConnectionClosedException
 import logging
 
 logger = logging.getLogger('arubaoss.helper.is_alive')
 
-connection = Connection()
 
-
-def is_alive():
+def is_alive(connection):
     """Check if device connection is alive."""
     """check if session cookie is still valid
     Returns:

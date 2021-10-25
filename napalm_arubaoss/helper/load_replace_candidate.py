@@ -1,6 +1,5 @@
 """Replace running config with the candidate."""
 
-from napalm_arubaoss.helper.base import Connection
 from napalm.base.exceptions import ReplaceConfigException
 import logging
 
@@ -8,10 +7,8 @@ from napalm_arubaoss.helper.utils import str_to_b64, read_candidate
 
 logger = logging.getLogger('arubaoss.helper.load_replace_candidate')
 
-connection = Connection()
 
-
-def load_replace_candidate(filename=None, config=None):
+def load_replace_candidate(connection, filename=None, config=None):
     """Replace running config with the candidate."""
     """ Implentation of napalm module load_replace_candidate()
     ArubaOS-Switch supports payload_type options:
@@ -24,7 +21,7 @@ def load_replace_candidate(filename=None, config=None):
     url = connection.config['api_url'] + 'system/config/payload'
     payload = {"payload_type": "RPT_BACKUP_FILE"}
     if filename is not None:
-        config = read_candidate(filename)
+        config = read_candidate(connection=connection, candidate=filename)
 
     if config is not None:
         payload['config_base64_encoded'] = str_to_b64(config)

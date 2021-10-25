@@ -2,15 +2,12 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
 from napalm_arubaoss.helper.get_ntp_servers import get_ntp_servers
 
 logger = logging.getLogger('arubaoss.helper.get_ntp_stats')
 
-connection = Connection()
 
-
-def get_ntp_stats():
+def get_ntp_stats(connection):
     """Get NTP peer statistics."""
     out = []
     associations = get_ntp_servers()

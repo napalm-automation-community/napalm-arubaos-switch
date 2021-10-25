@@ -2,14 +2,10 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger('arubaoss.helper.get_ntp_servers')
 
-connection = Connection()
 
-
-def get_ntp_servers():
+def get_ntp_servers(connection):
     """Get NTP servers."""
     " TO-DO: add IPv6 support, currently getting 404 from the API"
     url = connection.config['api_url'] + 'config/ntp/server/ip4addr'

@@ -2,15 +2,12 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
 from napalm_arubaoss.helper.utils import mac_reformat
 
 logger = logging.getLogger('arubaoss.helper.get_mac_address_table')
 
-connection = Connection()
 
-
-def get_mac_address_table():
+def get_mac_address_table(connection):
     """Get the mac-address table of the device."""
     url = connection.config['api_url'] + 'mac-table'
     resp = connection.get(url)

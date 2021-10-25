@@ -2,14 +2,10 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger('arubaoss.helper.get_facts')
 
-connection = Connection()
 
-
-def get_facts():
+def get_facts(connection):
     """Get general device information."""
     system_status_url = connection.config['api_url'] + 'system/status'
     switch_status_url = connection.config['api_url'] + 'system/status/switch'

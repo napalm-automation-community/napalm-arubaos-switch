@@ -102,7 +102,7 @@ class ArubaOSS(NetworkDriver):
         :param confirm:
         :return:
         """
-        ret = commit_config(confirm=confirm)
+        ret = commit_config(connection=self.connection, confirm=confirm)
 
         return ret
 
@@ -112,7 +112,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = compare_config()
+        ret = compare_config(connection=self.connection)
 
         return ret
 
@@ -140,7 +140,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        backup_config(destination='REST_Payload_Backup')
+        backup_config(connection=self.connection, destination='REST_Payload_Backup')
 
     def get_arp_table(self, *args, **kwargs):
         """
@@ -150,7 +150,7 @@ class ArubaOSS(NetworkDriver):
         :param kwargs:
         :return:
         """
-        ret = get_arp_table(self_obj=self)
+        ret = get_arp_table(connection=self.connection, self_obj=self)
 
         return ret
 
@@ -189,7 +189,8 @@ class ArubaOSS(NetworkDriver):
         :param full:
         :return:
         """
-        ret = get_config(retrieve=retrieve)
+        # TODO check why "full" exists
+        ret = get_config(connection=self.connection, retrieve=retrieve)
 
         return ret
 
@@ -223,7 +224,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_facts()
+        ret = get_facts(connection=self.connection)
 
         return ret
 
@@ -259,7 +260,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_interfaces_ip()
+        ret = get_interfaces_ip(connection=self.connection)
 
         return ret
 
@@ -277,7 +278,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_lldp_neighbors()
+        ret = get_lldp_neighbors(connection=self.connection)
 
         return ret
 
@@ -299,7 +300,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_mac_address_table()
+        ret = get_mac_address_table(connection=self.connection)
 
         return ret
 
@@ -321,7 +322,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_servers()
+        ret = get_ntp_servers(connection=self.connection)
 
         return ret
 
@@ -333,7 +334,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_servers()
+        ret = get_ntp_servers(connection=self.connection)
 
         return ret
 
@@ -343,7 +344,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_stats()
+        ret = get_ntp_stats(connection=self.connection)
 
         return ret
 
@@ -383,6 +384,7 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         ret = get_route_to(
+            connection=self.connection,
             destination=destination,
             protocol=protocol,
             self_obj=self
@@ -412,7 +414,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = is_alive()
+        ret = is_alive(connection=self.connection)
 
         return ret
 
@@ -429,7 +431,7 @@ class ArubaOSS(NetworkDriver):
         :param config:
         :return:
         """
-        ret = load_merge_candidate(filename=filename, config=config)
+        ret = load_merge_candidate(connection=self.connection, filename=filename, config=config)
 
         return ret
 
@@ -449,7 +451,7 @@ class ArubaOSS(NetworkDriver):
         :param config:
         :return:
         """
-        ret = load_replace_candidate(filename=filename, config=config)
+        ret = load_replace_candidate(connection=self.connection, filename=filename, config=config)
 
         return ret
 
@@ -495,7 +497,8 @@ class ArubaOSS(NetworkDriver):
             ttl=255,
             size=100,
             count=5,
-            vrf=''
+            vrf='',
+            source_interface=''
     ):
         """
         Execute ping on the device and returns a dictionary with the result.
@@ -503,13 +506,14 @@ class ArubaOSS(NetworkDriver):
         :param destination: needed argument
         :param source: not implemented as not available from device
         :param ttl: not implemented as not available from device
-        :param timeout: not implemented as not available from device
+        :param timeout: Maximum seconds to wait after sending final packet
         :param vrf: not implemented as not available from device
         :param size: not implemented as not available from device
         :param count: not implemented as not available from device
+        :param source_interface: not implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
-        ret = ping(destination=destination, timeout=timeout)
+        ret = ping(connection=self.connection, destination=destination, timeout=timeout)
         return ret
 
     def post_connection_tests(self):
@@ -534,7 +538,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = rollback()
+        ret = rollback(connection=self.connection)
 
         return ret
 
@@ -556,6 +560,6 @@ class ArubaOSS(NetworkDriver):
         :param vrf: not implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
-        ret = traceroute(destination=destination)
+        ret = traceroute(connection=self.connection, destination=destination)
 
         return ret

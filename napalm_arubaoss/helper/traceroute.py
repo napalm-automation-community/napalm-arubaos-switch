@@ -3,16 +3,10 @@
 import socket
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger('arubaoss.helper.traceroute')
 
-connection = Connection()
 
-
-def traceroute(
-        destination
-):
+def traceroute(connection, destination):
     """
     Execute traceroute on the device and returns a dictionary with the result.
 

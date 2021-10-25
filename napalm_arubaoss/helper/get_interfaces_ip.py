@@ -3,14 +3,10 @@
 from netaddr import IPNetwork
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger('arubaoss.helper.get_interfaces_ip')
 
-connection = Connection()
 
-
-def get_interfaces_ip():
+def get_interfaces_ip(connection):
     """Get IP interface IP addresses."""
     "Looks like there's a bug n ArubaOS and is not returning IPv6"
 

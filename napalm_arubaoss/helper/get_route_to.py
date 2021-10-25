@@ -8,10 +8,8 @@ from napalm_arubaoss.helper.base import Connection
 
 logger = logging.getLogger('arubaoss.helper.get_route_to')
 
-connection = Connection()
 
-
-def get_route_to(destination='', protocol='', self_obj=None):
+def get_route_to(connection, destination='', protocol='', self_obj=None):
     """
     Get route to destination.
 
