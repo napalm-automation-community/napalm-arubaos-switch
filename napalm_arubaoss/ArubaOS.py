@@ -52,6 +52,9 @@ class ArubaOSS(NetworkDriver):
             timeout=10,
             optional_args=None
     ):
+        if not optional_args:
+            optional_args = {}
+
         """Instantiate the module."""
         if optional_args.get('debugging', False):
             logger.setLevel(logging.DEBUG)
