@@ -12,7 +12,8 @@ def get_facts(connection):
     dns_url = connection.config['api_url'] + 'dns'
     out = {
         'vendor': 'HPE Aruba',
-        'interface_list': []
+        'interface_list': [],
+        'uptime': -1
     }
 
     call = connection.get(system_status_url)
