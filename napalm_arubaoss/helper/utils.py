@@ -48,11 +48,9 @@ def config_batch(connection, cmd_list):
     check_status = connection.get(url + "/status")
     if check_status.status_code == 200:
         for cmd_status in check_status.json()['cmd_exec_logs']:
-            if cmd_status['status'] != "CCS_SUCCESS":
-                logger.debug("command failed to execute with error {}".format(cmd_status['result']))
+            if not cmd_status['status'] == "CCS_SUCCESS":
+                logger.warning("command failed to execute with error {}".format(cmd_status['result']))
                 return False
-            else:
-                return True
         return True
 
 
