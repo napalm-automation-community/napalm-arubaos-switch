@@ -21,7 +21,7 @@ def load_replace_candidate(connection, filename=None, config=None):
     url = connection.config['api_url'] + 'system/config/payload'
     payload = {"payload_type": "RPT_BACKUP_FILE"}
     if filename is not None:
-        config = read_candidate(connection=connection, candidate=filename)
+        config = read_candidate(candidate=filename)
 
     if config is not None:
         payload['config_base64_encoded'] = str_to_b64(config)
