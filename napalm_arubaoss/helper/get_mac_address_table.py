@@ -4,21 +4,21 @@ import logging
 
 from napalm_arubaoss.helper.utils import mac_reformat
 
-logger = logging.getLogger('arubaoss.helper.get_mac_address_table')
+logger = logging.getLogger("arubaoss.helper.get_mac_address_table")
 
 
 def get_mac_address_table(connection):
     """Get the mac-address table of the device."""
-    url = connection.config['api_url'] + 'mac-table'
+    url = connection.config["api_url"] + "mac-table"
     resp = connection.get(url)
     if resp.status_code == 200:
         table = []
-        for entry in resp.json().get('mac_table_entry_element'):
+        for entry in resp.json().get("mac_table_entry_element"):
             item = {
-                'mac': mac_reformat(entry['mac_address']),
-                'interface': entry['port_id'],
-                'vlan': entry['vlan_id'],
-                'active': True,
+                "mac": mac_reformat(entry["mac_address"]),
+                "interface": entry["port_id"],
+                "vlan": entry["vlan_id"],
+                "active": True,
                 # 'static': False,  # not supported
                 # 'moves': 0,  # not supported
                 # 'last_move': 0.0  # not supported

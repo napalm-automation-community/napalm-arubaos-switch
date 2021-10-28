@@ -22,17 +22,17 @@ from napalm_arubaoss.helper import (
     load_replace_candidate,
     ping,
     rollback,
-    traceroute
+    traceroute,
 )
 
 from napalm.base.base import NetworkDriver
 
-logger = logging.getLogger('arubaoss')
+logger = logging.getLogger("arubaoss")
 logger.setLevel(logging.INFO)
 
 stream_formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 streamhandler = logging.StreamHandler()
 streamhandler.setFormatter(stream_formatter)
@@ -45,22 +45,17 @@ class ArubaOSS(NetworkDriver):
     """Class for connecting to aruba-os devices using the rest-api."""
 
     def __init__(
-            self,
-            hostname,
-            username='',
-            password='',
-            timeout=10,
-            optional_args=None
+        self, hostname, username="", password="", timeout=10, optional_args=None
     ):
         if not optional_args:
             optional_args = {}
 
         """Instantiate the module."""
-        if optional_args.get('debugging', False):
+        if optional_args.get("debugging", False):
             logger.setLevel(logging.DEBUG)
             streamhandler.setLevel(logging.DEBUG)
 
-        if optional_args.get('disable_ssl_warnings', False):
+        if optional_args.get("disable_ssl_warnings", False):
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         self.hostname = hostname
@@ -140,7 +135,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        backup_config(connection=self.connection, destination='REST_Payload_Backup')
+        backup_config(connection=self.connection, destination="REST_Payload_Backup")
 
     def get_arp_table(self, *args, **kwargs):
         """
@@ -154,7 +149,7 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def get_bgp_config(self, group='', neighbor=''):
+    def get_bgp_config(self, group="", neighbor=""):
         """
         Get BGP config - NOT IMPLEMENTED.
 
@@ -172,7 +167,7 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_bgp_neighbors()
 
-    def get_bgp_neighbors_detail(self, neighbor_address=''):
+    def get_bgp_neighbors_detail(self, neighbor_address=""):
         """
         Get BGP Neighbors detail - NOT IMPLEMENTED.
 
@@ -181,7 +176,7 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_bgp_neighbors_detail()
 
-    def get_config(self, retrieve='all', full=False):
+    def get_config(self, retrieve="all", full=False):
         """
         Get configuration stored on the device.
 
@@ -304,7 +299,7 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def get_network_instances(self, name=''):
+    def get_network_instances(self, name=""):
         """
         Get network instances - NOT IMPLEMENTED.
 
@@ -375,7 +370,7 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_probes_results()
 
-    def get_route_to(self, destination='', protocol=''):
+    def get_route_to(self, destination="", protocol=""):
         """
         Get route to destination.
 
@@ -387,7 +382,7 @@ class ArubaOSS(NetworkDriver):
             connection=self.connection,
             destination=destination,
             protocol=protocol,
-            self_obj=self
+            self_obj=self,
         )
 
         return ret
@@ -431,7 +426,9 @@ class ArubaOSS(NetworkDriver):
         :param config:
         :return:
         """
-        ret = load_merge_candidate(connection=self.connection, filename=filename, config=config)
+        ret = load_merge_candidate(
+            connection=self.connection, filename=filename, config=config
+        )
 
         return ret
 
@@ -451,16 +448,14 @@ class ArubaOSS(NetworkDriver):
         :param config:
         :return:
         """
-        ret = load_replace_candidate(connection=self.connection, filename=filename, config=config)
+        ret = load_replace_candidate(
+            connection=self.connection, filename=filename, config=config
+        )
 
         return ret
 
     def load_template(
-            self,
-            template_name,
-            template_source=None,
-            template_path=None,
-            **template_vars
+        self, template_name, template_source=None, template_path=None, **template_vars
     ):
         """
         Load template - NOT IMPLEMENTED.
@@ -484,21 +479,21 @@ class ArubaOSS(NetworkDriver):
             username=self.username,
             password=self.password,
             timeout=self.timeout,
-            optional_args=self.optional_args
+            optional_args=self.optional_args,
         )
 
         return True
 
     def ping(
-            self,
-            destination,
-            source='',
-            timeout=2,
-            ttl=255,
-            size=100,
-            count=5,
-            vrf='',
-            source_interface=''
+        self,
+        destination,
+        source="",
+        timeout=2,
+        ttl=255,
+        size=100,
+        count=5,
+        vrf="",
+        source_interface="",
     ):
         """
         Execute ping on the device and returns a dictionary with the result.
@@ -542,14 +537,7 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def traceroute(
-            self,
-            destination,
-            source='',
-            ttl=255,
-            timeout=2,
-            vrf=''
-    ):
+    def traceroute(self, destination, source="", ttl=255, timeout=2, vrf=""):
         """
         Execute traceroute on the device.
 
