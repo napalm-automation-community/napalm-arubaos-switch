@@ -9,20 +9,13 @@ from napalm_arubaoss.helper.load_replace_candidate import load_replace_candidate
 logger = logging.getLogger("arubaoss.helper.commit_config")
 
 
-def commit_config(self, confirm=0):
+def commit_config(self, message=""):
     """Backups and commit the configuration, and handles commit confirm."""
+
+    if message:
+        msg = "\"message\" support has not been added " \
+              "for this getter on this platform."
+        raise NotImplementedError(msg)
+
     backup_config(self.connection)
-    logger.debug("Confirm rollback time is {}".format(str(confirm)))
-    if confirm > 0:
-        candidate = get_config(connection=self.connection, retrieve="candidate")[
-            "candidate"
-        ][:-2]
-        candidate_confirm = (
-            candidate
-            + 'job ROLLBACK delay {} \
-            "cfg-restore flash backup_running"\n'.format(
-                str(confirm)
-            )
-        )
-        load_replace_candidate(self=self, config=candidate_confirm)
     commit_candidate(self=self, config="REST_Payload_Backup")
