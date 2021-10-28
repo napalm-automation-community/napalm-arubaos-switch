@@ -21,6 +21,7 @@ def get_arp_table(self, vrf):
     for arp in arp_table:
         arp["interface"] = arp.pop("port")
         arp["mac"] = mac_reformat(arp["mac"])
-        arp["age"] = "N/A"
+        arp["age"] = -1.00  # needs to be a float - -1.00 to signal "N/A"
+        arp.pop("type")  # pop because it is not present in the napalm model
 
     return arp_table

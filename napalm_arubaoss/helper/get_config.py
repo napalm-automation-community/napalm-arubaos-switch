@@ -5,8 +5,14 @@ import logging
 logger = logging.getLogger("arubaoss.helper.get_config")
 
 
-def get_config(self, retrieve="all"):
+def get_config(self, retrieve="all", full=False):
     """Get configuration stored on the device."""
+
+    if full:
+        msg = "\"full\" is not available " \
+              "for this getter on this platform."
+        raise NotImplementedError(msg)
+
     out = {"startup": "", "candidate": "", "running": ""}
 
     cmd_mapping = {
@@ -20,7 +26,11 @@ def get_config(self, retrieve="all"):
         else cmd_mapping
     )
 
-    outputs = self.connection.cli([cmd for cmd, config in cmd_mapping.items()])
+    outputs = self.connection.cli(
+        [
+            cmd for cmd, config in cmd_mapping.items()
+        ]
+    )
 
     for okey, ovalue in outputs.items():
         out[cmd_mapping[okey]] = ovalue
