@@ -5,10 +5,10 @@ import logging
 logger = logging.getLogger("arubaoss.helper.get_lldp_neighbors")
 
 
-def get_lldp_neighbors(connection):
+def get_lldp_neighbors(self):
     """Get a list of LLDP neighbors."""
-    url = connection.config["api_url"] + "/lldp/remote-device"
-    resp = connection.get(url)
+    url = self.connection.config["api_url"] + "/lldp/remote-device"
+    resp = self.connection.get(url)
     logger.debug("API returned {}".format(resp.status_code))
 
     if resp.ok:

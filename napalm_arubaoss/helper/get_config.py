@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("arubaoss.helper.get_config")
 
 
-def get_config(connection, retrieve="all"):
+def get_config(self, retrieve="all"):
     """Get configuration stored on the device."""
     out = {"startup": "", "candidate": "", "running": ""}
 
@@ -20,7 +20,7 @@ def get_config(connection, retrieve="all"):
         else cmd_mapping
     )
 
-    outputs = connection.cli([cmd for cmd, config in cmd_mapping.items()])
+    outputs = self.connection.cli([cmd for cmd, config in cmd_mapping.items()])
 
     for okey, ovalue in outputs.items():
         out[cmd_mapping[okey]] = ovalue

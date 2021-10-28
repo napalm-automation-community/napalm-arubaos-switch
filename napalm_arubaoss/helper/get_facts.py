@@ -5,19 +5,19 @@ import logging
 logger = logging.getLogger("arubaoss.helper.get_facts")
 
 
-def get_facts(connection):
+def get_facts(self):
     """Get general device information."""
-    system_status_url = connection.config["api_url"] + "system/status"
-    switch_status_url = connection.config["api_url"] + "system/status/switch"
-    dns_url = connection.config["api_url"] + "dns"
+    system_status_url = self.connection.config["api_url"] + "system/status"
+    switch_status_url = self.connection.config["api_url"] + "system/status/switch"
+    dns_url = self.connection.config["api_url"] + "dns"
     out = {"vendor": "HPE Aruba", "interface_list": [], "uptime": -1}
 
-    call = connection.get(system_status_url)
+    call = self.connection.get(system_status_url)
 
     # If it's a Stack, use `/system/status/global_info`
     if call.status_code == 404:
-        system_status_url = connection.config["api_url"] + "system/status/global_info"
-        call = connection.get(system_status_url)
+        system_status_url = self.connection.config["api_url"] + "system/status/global_info"
+        call = self.connection.get(system_status_url)
     if call.ok:
         rest_out = call.json()
         out["hostname"] = rest_out["name"]
@@ -26,7 +26,7 @@ def get_facts(connection):
         out["model"] = rest_out.get("product_model", "")
 
         # get domain name to generate the FQDN
-        call = connection.get(dns_url)
+        call = self.connection.get(dns_url)
         if call.ok:
             rest_out = call.json()
             # return "{{hostname}}." if no domain is configured
@@ -35,12 +35,12 @@ def get_facts(connection):
             )
 
     # Get interface list
-    call = connection.get(switch_status_url)
+    call = self.connection.get(switch_status_url)
     if call.ok:
         rest_out = call.json()
         if rest_out.get("switch_type", "ST_STANDALONE") == "ST_STACKED":
-            serial_url = connection.config["api_url"] + "system/status/members/1"
-            call = connection.get(serial_url)
+            serial_url = self.connection.config["api_url"] + "system/status/members/1"
+            call = self.connection.get(serial_url)
             if call.ok:
                 out["serial_number"] = call.json().get("serial_number")
                 out["model"] = call.json().get("product_model")

@@ -27,23 +27,23 @@ def str_to_b64(spayload):
     return payload_b64.decode("utf-8")
 
 
-def config_batch(connection, cmd_list):
+def config_batch(self, cmd_list):
     """
     Load a batch of configuration commands into the running-config.
 
     :param cmd_list:
     :return:
     """
-    url = connection.config["api_url"] + "cli_batch"
+    url = self.connection.config["api_url"] + "cli_batch"
     data = {"cli_batch_base64_encoded": str_to_b64("\n".join(cmd_list))}
-    batch_run = connection.post(url, json=data)
+    batch_run = self.connection.post(url, json=data)
 
     if not batch_run.status_code == 202:
         logger.debug("Failed to paste commands")
 
         return False
 
-    check_status = connection.get(url + "/status")
+    check_status = self.connection.get(url + "/status")
     if check_status.status_code == 200:
         for cmd_status in check_status.json()["cmd_exec_logs"]:
             if not cmd_status["status"] == "CCS_SUCCESS":
@@ -56,14 +56,14 @@ def config_batch(connection, cmd_list):
         return True
 
 
-def backup_config(connection, config="running", destination="backup"):
+def backup_config(self, config="running", destination="backup"):
     """Backup config."""
     """Supported configs
     API:
         - "CT_RUNNING_CONFIG",
         - "CT_STARTUP_CONFIG"
     """
-    url = connection.config["api_url"] + "system/config/cfg_backup_files"
+    url = self.connection.config["api_url"] + "system/config/cfg_backup_files"
     payload = {}
     dest_map = {
         "backup": "backup_{}".format(config),
@@ -77,7 +77,7 @@ def backup_config(connection, config="running", destination="backup"):
         "unsupported argument; raise error"
         return False
 
-    cmd_post = connection.post(url, json=payload)
+    cmd_post = self.connection.post(url, json=payload)
     if not cmd_post.ok:
         "raise error"
         pass
@@ -85,7 +85,7 @@ def backup_config(connection, config="running", destination="backup"):
         return cmd_post.json()
 
 
-def transaction_status(connection, url):
+def transaction_status(self, url):
     """
     Wait for the requested transaction to finish within the specified timeout.
 
@@ -94,27 +94,27 @@ def transaction_status(connection, url):
     """
     status = "CRS_IN_PROGRESS"
     elapsed = 0
-    while status == "CRS_IN_PROGRESS" and elapsed < connection.timeout:
-        call = connection.get(url)
+    while status == "CRS_IN_PROGRESS" and elapsed < self.connection.timeout:
+        call = self.connection.get(url)
         if call.status_code in range(200, 300):
             status = call.json()
             return status
         elapsed += 1
         sleep(1)
-    if elapsed == (int(connection.timeout) - 1) and status == "CRS_IN_PROGRESS":
+    if elapsed == (int(self.connection.timeout) - 1) and status == "CRS_IN_PROGRESS":
         raise CommandTimeoutException("Transaction timed out")
 
 
-def commit_candidate(connection, config):
+def commit_candidate(self, config):
     """Commit the candidate configuration."""
-    url = connection.config["api_url"] + "system/config/cfg_restore"
+    url = self.connection.config["api_url"] + "system/config/cfg_restore"
     data = {"server_type": "ST_FLASH", "file_name": config, "is_oobm": False}
-    cmd_post = connection.post(url, json=data)
+    cmd_post = self.connection.post(url, json=data)
 
     if not cmd_post.json()["failure_reason"]:
         check_url = url + "/status"
 
-        return transaction_status(connection=connection, url=check_url)
+        return transaction_status(self=self, url=check_url)
 
 
 def mac_reformat(mac):

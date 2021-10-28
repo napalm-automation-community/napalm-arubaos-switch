@@ -8,12 +8,12 @@ from napalm_arubaoss.helper.compare_config import compare_config
 logger = logging.getLogger("arubaoss.helper.rollback")
 
 
-def rollback(connection):
+def rollback(self):
     """Rollback configuration."""
-    diff = compare_config(connection=connection)
+    diff = compare_config(self=self)
     if diff and isinstance(diff, dict):
         if not (len(diff.get("diff_add_list")) and len(diff.get("diff_remove_list"))):
-            commit_candidate(connection=connection, config="backup_running")
+            commit_candidate(self=self, config="backup_running")
 
             return True
         else:

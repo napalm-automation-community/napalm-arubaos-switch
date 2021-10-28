@@ -97,7 +97,7 @@ class ArubaOSS(NetworkDriver):
         :param confirm:
         :return:
         """
-        ret = commit_config(connection=self.connection, confirm=confirm)
+        ret = commit_config(self=self, confirm=confirm)
 
         return ret
 
@@ -107,7 +107,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = compare_config(connection=self.connection)
+        ret = compare_config(self=self)
 
         return ret
 
@@ -135,7 +135,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        backup_config(connection=self.connection, destination="REST_Payload_Backup")
+        backup_config(self=self, destination="REST_Payload_Backup")
 
     def get_arp_table(self, vrf=""):
         """
@@ -184,7 +184,7 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         # TODO check why "full" exists
-        ret = get_config(connection=self.connection, retrieve=retrieve)
+        ret = get_config(self=self, retrieve=retrieve)
 
         return ret
 
@@ -218,7 +218,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_facts(connection=self.connection)
+        ret = get_facts(self=self)
 
         return ret
 
@@ -254,7 +254,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_interfaces_ip(connection=self.connection)
+        ret = get_interfaces_ip(self=self)
 
         return ret
 
@@ -272,7 +272,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_lldp_neighbors(connection=self.connection)
+        ret = get_lldp_neighbors(self=self)
 
         return ret
 
@@ -294,7 +294,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_mac_address_table(connection=self.connection)
+        ret = get_mac_address_table(self=self)
 
         return ret
 
@@ -316,7 +316,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_servers(connection=self.connection)
+        ret = get_ntp_servers(self=self)
 
         return ret
 
@@ -328,7 +328,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_servers(connection=self.connection)
+        ret = get_ntp_servers(self=self)
 
         return ret
 
@@ -338,7 +338,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_stats(connection=self.connection)
+        ret = get_ntp_stats(self=self)
 
         return ret
 
@@ -378,10 +378,9 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         ret = get_route_to(
-            connection=self.connection,
+            self=self,
             destination=destination,
-            protocol=protocol,
-            self_obj=self,
+            protocol=protocol
         )
 
         return ret
@@ -408,7 +407,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = is_alive(connection=self.connection)
+        ret = is_alive(self=self)
 
         return ret
 
@@ -426,7 +425,7 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         ret = load_merge_candidate(
-            connection=self.connection, filename=filename, config=config
+            self=self, filename=filename, config=config
         )
 
         return ret
@@ -448,7 +447,7 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         ret = load_replace_candidate(
-            connection=self.connection, filename=filename, config=config
+            self=self, filename=filename, config=config
         )
 
         return ret
@@ -507,7 +506,7 @@ class ArubaOSS(NetworkDriver):
         :param source_interface: not implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
-        ret = ping(connection=self.connection, destination=destination, timeout=timeout)
+        ret = ping(self=self, destination=destination, timeout=timeout)
         return ret
 
     def post_connection_tests(self):
@@ -532,7 +531,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = rollback(connection=self.connection)
+        ret = rollback(self=self)
 
         return ret
 
@@ -547,6 +546,6 @@ class ArubaOSS(NetworkDriver):
         :param vrf: not implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
-        ret = traceroute(connection=self.connection, destination=destination)
+        ret = traceroute(self=self, destination=destination)
 
         return ret

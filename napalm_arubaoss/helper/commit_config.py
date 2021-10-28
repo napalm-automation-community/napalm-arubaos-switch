@@ -9,12 +9,12 @@ from napalm_arubaoss.helper.load_replace_candidate import load_replace_candidate
 logger = logging.getLogger("arubaoss.helper.commit_config")
 
 
-def commit_config(connection, confirm=0):
+def commit_config(self, confirm=0):
     """Backups and commit the configuration, and handles commit confirm."""
-    backup_config(connection)
+    backup_config(self.connection)
     logger.debug("Confirm rollback time is {}".format(str(confirm)))
     if confirm > 0:
-        candidate = get_config(connection=connection, retrieve="candidate")[
+        candidate = get_config(connection=self.connection, retrieve="candidate")[
             "candidate"
         ][:-2]
         candidate_confirm = (
@@ -24,5 +24,5 @@ def commit_config(connection, confirm=0):
                 str(confirm)
             )
         )
-        load_replace_candidate(connection=connection, config=candidate_confirm)
-    commit_candidate(connection=connection, config="REST_Payload_Backup")
+        load_replace_candidate(self=self, config=candidate_confirm)
+    commit_candidate(self=self, config="REST_Payload_Backup")

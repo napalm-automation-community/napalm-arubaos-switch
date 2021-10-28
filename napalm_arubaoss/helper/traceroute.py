@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger("arubaoss.helper.traceroute")
 
 
-def traceroute(connection, destination):
+def traceroute(self, destination):
     """
     Execute traceroute on the device and returns a dictionary with the result.
 
@@ -17,11 +17,11 @@ def traceroute(connection, destination):
     :param vrf: not implemented as not available from device
     :return: returns a dictionary containing the hops and probes
     """
-    url = connection.config["api_url"] + "trace-route"
+    url = self.connection.config["api_url"] + "trace-route"
     data = {
         "destination": {"ip_address": {"version": "IAV_IP_V4", "octets": destination}}
     }
-    data_post = connection.post(url, json=data)
+    data_post = self.connection.post(url, json=data)
 
     if not data_post.status_code == 200:
         return {"error": "unknown host {}".format(destination)}

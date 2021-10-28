@@ -9,7 +9,7 @@ from napalm_arubaoss.helper.base import Connection
 logger = logging.getLogger("arubaoss.helper.get_route_to")
 
 
-def get_route_to(connection, destination="", protocol="", self_obj=None):
+def get_route_to(self, destination="", protocol=""):
     """
     Get route to destination.
 
@@ -17,8 +17,7 @@ def get_route_to(connection, destination="", protocol="", self_obj=None):
     :param protocol:
     :return:
     """
-    if not self_obj:
-        return {}
+
     if destination:
         ip_address = IPNetwork(destination)
 
@@ -33,9 +32,9 @@ def get_route_to(connection, destination="", protocol="", self_obj=None):
             },
         }
         cmd_dict = cmds[ip_address.version]
-        ret = connection.run_cmd(cmd_dict["command"])
+        ret = self.connection.run_cmd(cmd_dict["command"])
 
-        route_table = textfsm_extractor(self_obj, cmd_dict["template"], ret)
+        route_table = textfsm_extractor(self, cmd_dict["template"], ret)
     else:
         cmds = [
             {
@@ -48,12 +47,12 @@ def get_route_to(connection, destination="", protocol="", self_obj=None):
             },
         ]
 
-        ret = connection.cli([cmd["command"] for cmd in cmds])
+        ret = self.connection.cli([cmd["command"] for cmd in cmds])
 
         route_table = []
         for cmd in cmds:
             route_table.extend(
-                textfsm_extractor(self_obj, cmd["template"], ret[cmd["command"]])
+                textfsm_extractor(self, cmd["template"], ret[cmd["command"]])
             )
 
     out = {}

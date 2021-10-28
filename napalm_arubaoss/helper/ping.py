@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger("arubaoss.helper.ping")
 
 
-def ping(connection, destination, timeout=2):
+def ping(self, destination, timeout=2):
     """
     Execute ping on the device and returns a dictionary with the result.
 
@@ -13,12 +13,12 @@ def ping(connection, destination, timeout=2):
     :param timeout: not implemented as not available from device
     :return: returns a dictionary containing the hops and probes
     """
-    url = connection.config["api_url"] + "ping"
+    url = self.connection.config["api_url"] + "ping"
     data = {
         "destination": {"ip_address": {"version": "IAV_IP_V4", "octets": destination}},
         "timeout_in_seconds": timeout,
     }
-    data_post = connection.post(url, json=data)
+    data_post = self.connection.post(url, json=data)
 
     if not data_post.status_code == 200:
         return {"error": "unknown host {}".format(destination)}

@@ -8,7 +8,7 @@ from napalm_arubaoss.helper.utils import read_candidate, config_batch, backup_co
 logger = logging.getLogger("arubaoss.helper.load_merge_candidate")
 
 
-def load_merge_candidate(connection, filename=None, config=None):
+def load_merge_candidate(self, filename=None, config=None):
     """Merge candidate configuration with the running one."""
     """
     Imperative config change:
@@ -23,9 +23,9 @@ def load_merge_candidate(connection, filename=None, config=None):
     if config is not None:
         if isinstance(config, str):
             config = config.split("\n")
-        if not config_batch(connection=connection, cmd_list=config):
+        if not config_batch(self=self, cmd_list=config):
             raise MergeConfigException("Configuration merge failed")
 
     # mimic load_replace_candidate behaviour, by making sure candidate
     # config exactly matches our merged configuration
-    backup_config(connection=connection, destination="REST_Payload_Backup")
+    backup_config(self=self, destination="REST_Payload_Backup")

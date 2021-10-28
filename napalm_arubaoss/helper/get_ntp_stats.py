@@ -7,17 +7,17 @@ from napalm_arubaoss.helper.get_ntp_servers import get_ntp_servers
 logger = logging.getLogger("arubaoss.helper.get_ntp_stats")
 
 
-def get_ntp_stats(connection):
+def get_ntp_stats(self):
     """Get NTP peer statistics."""
     out = []
     associations = get_ntp_servers()
 
     for association in associations.keys():
         url = "{api_url}monitoring/ntp/associations/detail/{association}".format(
-            api_url=connection.config["api_url"], association=association
+            api_url=self.connection.config["api_url"], association=association
         )
 
-        resp = connection.get(url)
+        resp = self.connection.get(url)
         if resp.status_code == 200:
             ntp_entry = {
                 "remote": resp.json()["IP Address"],
