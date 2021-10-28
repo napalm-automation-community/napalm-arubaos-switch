@@ -45,7 +45,7 @@ class ArubaOSS(NetworkDriver):
     """Class for connecting to aruba-os devices using the rest-api."""
 
     def __init__(
-        self, hostname, username="", password="", timeout=10, optional_args=None
+        self, hostname, username, password, timeout=60, optional_args=None
     ):
         if not optional_args:
             optional_args = {}
@@ -89,15 +89,15 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def commit_config(self, message=None, confirm=0):
+    def commit_config(self, message="", revert_in=None):
         """
         Backups and commit the configuration, and handles commit confirm.
 
         :param message:
-        :param confirm:
+        :param revert_in:
         :return:
         """
-        ret = commit_config(self=self, confirm=confirm)
+        ret = commit_config(self=self, revert_in=revert_in)
 
         return ret
 
@@ -175,12 +175,13 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_bgp_neighbors_detail()
 
-    def get_config(self, retrieve="all", full=False):
+    def get_config(self, retrieve="all", full=False, sanitized=False):
         """
         Get configuration stored on the device.
 
         :param retrieve:
         :param full:
+        :param sanitized:
         :return:
         """
         # TODO check why "full" exists
@@ -276,15 +277,14 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def get_lldp_neighbors_detail(self, *args, **kwargs):
+    def get_lldp_neighbors_detail(self, interface=""):
         """
         Get LLDP neighbor information.
 
-        :param args:
-        :param kwargs:
+        :param interface:
         :return:
         """
-        ret = get_lldp_neighbors_detail(*args, **kwargs)
+        ret = get_lldp_neighbors_detail(self=self, interface=interface)
 
         return ret
 
@@ -369,12 +369,13 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_probes_results()
 
-    def get_route_to(self, destination="", protocol=""):
+    def get_route_to(self, destination="", protocol="", longer=False):
         """
         Get route to destination.
 
         :param destination:
         :param protocol:
+        :param longer:
         :return:
         """
         ret = get_route_to(
@@ -486,12 +487,12 @@ class ArubaOSS(NetworkDriver):
         self,
         destination,
         source="",
-        timeout=2,
         ttl=255,
+        timeout=2,
         size=100,
         count=5,
         vrf="",
-        source_interface="",
+        source_interface=""
     ):
         """
         Execute ping on the device and returns a dictionary with the result.
@@ -503,7 +504,7 @@ class ArubaOSS(NetworkDriver):
         :param vrf: not implemented as not available from device
         :param size: not implemented as not available from device
         :param count: not implemented as not available from device
-        :param source_interface: not implemented as not available from device
+        :param source_interface: not  implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
         ret = ping(self=self, destination=destination, timeout=timeout)
