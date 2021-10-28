@@ -8,12 +8,16 @@ from napalm_arubaoss.helper.utils import mac_reformat
 logger = logging.getLogger("arubaoss.helper.get_arp_table")
 
 
-def get_arp_table(connection, self_obj=None, *args, **kwargs):
+def get_arp_table(self, vrf):
     """Get device's ARP table."""
-    if not self_obj:
-        return []
-    raw_arp = connection.run_cmd("show arp")
-    arp_table = textfsm_extractor(self_obj, "show_arp", raw_arp)
+
+    if vrf:
+        msg = "VRF support has not been added " \
+              "for this getter on this platform."
+        raise NotImplementedError(msg)
+
+    raw_arp = self.connection.run_cmd("show arp")
+    arp_table = textfsm_extractor(self, "show_arp", raw_arp)
     for arp in arp_table:
         arp["interface"] = arp.pop("port")
         arp["mac"] = mac_reformat(arp["mac"])

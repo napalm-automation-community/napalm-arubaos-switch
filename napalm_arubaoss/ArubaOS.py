@@ -137,15 +137,14 @@ class ArubaOSS(NetworkDriver):
         """
         backup_config(connection=self.connection, destination="REST_Payload_Backup")
 
-    def get_arp_table(self, *args, **kwargs):
+    def get_arp_table(self, vrf=""):
         """
         Get device's ARP table.
 
-        :param args:
-        :param kwargs:
+        :param vrf:
         :return:
         """
-        ret = get_arp_table(connection=self.connection, self_obj=self)
+        ret = get_arp_table(self=self, vrf=vrf)
 
         return ret
 
