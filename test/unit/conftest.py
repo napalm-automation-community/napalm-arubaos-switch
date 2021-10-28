@@ -81,6 +81,8 @@ class FakeArubaOSDevice(BaseTestDouble):
 
         return fake_return
 
+    def run_cmd(self, cmd):
+        return self.cli([cmd])[cmd]
 
     def show(self, command, raw_text=False):
         """Fake show."""
