@@ -3,8 +3,6 @@
 import logging
 from napalm.base.exceptions import CommandErrorException
 
-from napalm_arubaoss.helper.base import Connection
-
 logger = logging.getLogger("arubaoss.helper.compare_config")
 
 
