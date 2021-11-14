@@ -49,7 +49,7 @@ def traceroute(self, destination):
                 .get("gateway", {})
                 .get("ip_address", {})
                 .get("octets", ""),
-                "hostname": hostname,
+                "host_name": hostname,
             }
 
             ret["success"][hop_count + 1]["probes"][probe_count + 1] = probe
