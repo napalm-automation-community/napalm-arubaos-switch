@@ -7,7 +7,6 @@ logger = logging.getLogger("arubaoss.helper.get_config")
 
 def get_config(self, retrieve="all", full=False):
     """Get configuration stored on the device."""
-
     if full:
         msg = "\"full\" is not available " \
               "for this getter on this platform."

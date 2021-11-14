@@ -7,7 +7,6 @@ logger = logging.getLogger("arubaoss.helper.get_facts")
 
 def get_facts(self):
     """Get general device information."""
-
     url = "{base_url}{endpoint}"
 
     system_status_url = url.format(
