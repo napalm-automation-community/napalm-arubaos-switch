@@ -27,4 +27,6 @@ def load_replace_candidate(self, filename=None, config=None):
         payload["config_base64_encoded"] = str_to_b64(config)
         load = self.connection.post(url, json=payload)
         if load.status_code != 200:
-            raise ReplaceConfigException("Load configuration failed")
+            raise ReplaceConfigException(
+                f"Load configuration failed - Reason: {load.text}"
+            )
