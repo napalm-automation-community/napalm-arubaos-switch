@@ -4,7 +4,6 @@ from napalm.base.helpers import textfsm_extractor
 from netaddr import IPNetwork
 import logging
 
-from napalm_arubaoss.helper.base import Connection
 
 logger = logging.getLogger("arubaoss.helper.get_route_to")
 
@@ -17,6 +16,35 @@ def get_route_to(self, destination="", protocol=""):
     :param protocol:
     :return:
     """
+    inner_dictionary = {
+        "protocol": "",
+        "current_active": True,
+        "last_active": True,
+        "age": -1,
+        "next_hop": "",
+        "outgoing_interface": "",
+        "selected_next_hop": True,
+        "preference": -1,
+        "inactive_reason": "",
+        "routing_table": "",
+        "protocol_attributes": {}
+    }
+
+    bgp_dictionary = {
+        "local_as": -1,
+        "remote_as": -1,
+        "peer_id": "",
+        "as_path": "",
+        "communities": -1,
+        "local_preference": -1,
+        "preference2": -1,
+        "metric": -1,
+        "metric2": -1
+    }
+
+    isis_dictionary = {
+        "level": -1
+    }
 
     if destination:
         ip_address = IPNetwork(destination)
@@ -59,10 +87,19 @@ def get_route_to(self, destination="", protocol=""):
     for route in route_table:
         if not out.get(route["destination"]):
             out[route["destination"]] = []
-        new_path = {
-            "protocol": route["type"],
-            "preference": int(route["distance"]),
-            "next_hop": route["gateway"],
-        }
+
+        new_path = inner_dictionary.copy()
+        new_path["protocol"] = route["type"]
+        new_path["preference"] = int(route["distance"])
+        new_path["next_hop"] = route["gateway"]
+
+        # doesn't exist, but will be handled to be compliant with the tests
+        if route["type"] == "bgp":
+            new_path["protocol_attributes"] = bgp_dictionary.copy()
+
+        # doesn't exist, but will be handled to be compliant with the tests
+        if route["type"] == "isis":
+            new_path["protocol_attributes"] = isis_dictionary.copy()
+
         out[route["destination"]].append(new_path)
     return out
