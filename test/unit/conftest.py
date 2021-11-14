@@ -29,13 +29,14 @@ def pytest_generate_tests(metafunc):
 
 
 class PatchedArubaOSDriver(ArubaOS.ArubaOSS):
-    """Patched NXOS Driver."""
+    """Patched ArubaOS Driver."""
 
     def __init__(self, hostname, username, password, timeout=60, optional_args=None):
         super().__init__(hostname, username, password, timeout, optional_args)
 
         self.patched_attrs = ['connection']
         self.connection = FakeArubaOSDevice()
+        self.platform = "arubaos"
 
     def disconnect(self):
         pass
@@ -56,6 +57,18 @@ class FakeArubaOSDevice(BaseTestDouble):
         self.config = {'api_url': ''}
 
     def get(self, url: str):
+        full_path = self.find_file('facts.json')
+        facts = self.read_json_file(full_path)
+
+        facts = facts.get(url)
+        resp = Response(
+            facts.get('data', {}),
+            status=facts.get('status', 204),
+            ok=facts.get('ok', True)
+        )
+        return resp
+
+    def post(self, url: str, json=None):
         full_path = self.find_file('facts.json')
         facts = self.read_json_file(full_path)
 

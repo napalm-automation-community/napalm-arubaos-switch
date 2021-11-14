@@ -1,0 +1,49 @@
+{
+  "mac-table": {
+    "status": 200,
+    "data": {
+      "collection_result": {
+        "total_elements_count": 400,
+        "filtered_elements_count": 400
+      },
+      "mac_table_entry_element": [
+        {
+          "uri": "/mac-table/ec008b-f700e5",
+          "mac_address": "ec008b-f700e5",
+          "port_id": "Trk1",
+          "vlan_id": 1
+        },
+        {
+          "uri": "/mac-table/4e1114-b1113c",
+          "mac_address": "4e1114-b1113c",
+          "port_id": "Trk1",
+          "vlan_id": 48
+        },
+        {
+          "uri": "/mac-table/782277-60223f",
+          "mac_address": "782277-60223f",
+          "port_id": "3/44",
+          "vlan_id": 64
+        },
+        {
+          "uri": "/mac-table/003398-163385",
+          "mac_address": "003398-163385",
+          "port_id": "2/32",
+          "vlan_id": 64
+        },
+        {
+          "uri": "/mac-table/e04443-5d44b3",
+          "mac_address": "e04443-5d44b3",
+          "port_id": "Trk1",
+          "vlan_id": 104
+        },
+        {
+          "uri": "/mac-table/005598-175578",
+          "mac_address": "005598-175578",
+          "port_id": "4/25",
+          "vlan_id": 64
+        }
+      ]
+    }
+  }
+}

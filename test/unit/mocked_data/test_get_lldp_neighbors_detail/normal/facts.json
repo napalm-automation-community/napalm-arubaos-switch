@@ -1,0 +1,48 @@
+{
+  "lldp/remote-device": {
+    "status": 200,
+    "data": {
+      "collection_result": {
+        "total_elements_count": 1,
+        "filtered_elements_count": 1
+      },
+      "lldp_remote_device_element": [
+        {
+          "local_port": "oobm",
+          "chassis_type": "RCT_MAC_ADDRESS",
+          "chassis_id": "00 00 00 00 00 00",
+          "port_type": "LPT_INTERFACE_NAME",
+          "port_id": "GigabitEthernet1/0/8",
+          "port_description": "ARUBA-MGMT",
+          "system_name": "LAB-EDGE-SWITCH01",
+          "system_description": "HP Comware Platform Software, Software Version 5.20.99 Release 2222P01",
+          "pvid": null,
+          "capabilities_supported": {
+            "repeater": false,
+            "bridge": true,
+            "wlan_access_point": false,
+            "router": true,
+            "telephone": false,
+            "cable_device": false,
+            "station_only": false
+          },
+          "capabilities_enabled": {
+            "repeater": false,
+            "bridge": true,
+            "wlan_access_point": false,
+            "router": true,
+            "telephone": false,
+            "cable_device": false,
+            "station_only": false
+          },
+          "remote_management_address": [
+            {
+              "type": "AFM_IP4",
+              "address": "192.168.6.6"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

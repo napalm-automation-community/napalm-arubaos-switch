@@ -1,0 +1,46 @@
+{
+  "config/ntp/server/ip4addr": {
+    "status": 200,
+    "data": {
+      "ntpServerIp4addr_element": [
+        {
+          "ip4addr": {
+            "ip4addr_value": "116.203.116.168",
+            "ip4addr_reference": {
+              "min-poll": {
+                "min-poll_value": 6
+              },
+              "max-poll": {
+                "max-poll_value": 10
+              },
+              "oobm": true
+            }
+          },
+          "uri": "/config/ntp/server/ip4addr/116.203.116.168"
+        }
+      ]
+    }
+  },
+  "config/ntp/server-name/ASCII-STR": {
+    "status": 200,
+    "data": {
+      "ntpServerNameASCIISTR_element": [
+        {
+          "ASCII-STR": {
+            "ASCII-STR_value": "\"de.pool.ntp.org\"",
+            "ASCII-STR_reference": {
+              "min-poll": {
+                "min-poll_value": 6
+              },
+              "max-poll": {
+                "max-poll_value": 10
+              },
+              "oobm": true
+            }
+          },
+          "uri": "/config/ntp/server-name/ASCII-STR/%22de.pool.ntp.org%22"
+        }
+      ]
+    }
+  }
+}
