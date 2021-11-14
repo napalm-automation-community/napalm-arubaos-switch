@@ -23,20 +23,26 @@ def ping(self, destination, timeout=2):
     if not data_post.status_code == 200:
         return {"error": "unknown host {}".format(destination)}
 
-    if "PR_OK" in data_post.json().get("result"):
+    return_post = data_post.json() if hasattr(data_post, "json") else {}
+    result_post = return_post.get("result", "")
+    rtt = return_post.get("rtt_in_milliseconds", 0)
+    rtt_float = float(rtt)
+
+    if "PR_OK" in result_post:
         result = {
             "success": {
                 "probes_sent": 1,
                 "packet_loss": 0,
-                "rtt_min": data_post.json().get("rtt_in_milliseconds"),
-                "rtt_max": data_post.json().get("rtt_in_milliseconds"),
-                "rtt_avg": data_post.json().get("rtt_in_milliseconds"),
-                "rtt_stddev": 0,
-                "results": {
-                    "ip_address": destination,
-                    "rtt": data_post.json().get("rtt_in_milliseconds"),
-                },
+                "rtt_min": rtt_float,
+                "rtt_max": rtt_float,
+                "rtt_avg": rtt_float,
+                "rtt_stddev": 0.0,
+                "results": [
+                    {
+                        "ip_address": destination,
+                        "rtt": rtt_float
+                    }
+                ]
             }
         }
-
         return result
