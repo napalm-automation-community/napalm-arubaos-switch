@@ -1,4 +1,6 @@
 """Create the Session."""
+
+
 from requests_futures.sessions import FuturesSession
 from requests.models import Response
 from concurrent.futures import as_completed
@@ -19,14 +21,14 @@ class Connection:
 
     def __init__(self):
         """Initialize the class."""
+        self._apisession = None
+
         self.hostname = ""
         self.username = ""
         self.password = ""
         self.timeout = 10
         self.api = "v6"
         self.proto = "https"
-
-        self._apisession = FuturesSession()
 
         self.cli_output = {}
 
@@ -60,8 +62,12 @@ class Connection:
 
         url = self.config["api_url"] + "login-sessions"
 
+        self._apisession = FuturesSession()
         self._apisession.verify = optional_args.get("ssl_verify", True)
-        self._apisession.headers = {"Content-Type": "application/json"}
+        self._apisession.headers = {
+            "Content-Type": "application/json",
+            # "Connection": "close"
+        }
         self._apisession.keep_alive = optional_args.get("keepalive", True)
 
         params = {"userName": self.username, "password": self.password}
