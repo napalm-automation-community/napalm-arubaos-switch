@@ -7,6 +7,7 @@ from napalm_arubaoss.helper import (
     backup_config,
     commit_config,
     compare_config,
+    confirm_commit,
     get_mac_address_table,
     get_facts,
     get_arp_table,
@@ -17,6 +18,7 @@ from napalm_arubaoss.helper import (
     get_ntp_stats,
     get_ntp_servers,
     get_route_to,
+    has_pending_commit,
     is_alive,
     load_merge_candidate,
     load_replace_candidate,
@@ -47,6 +49,15 @@ class ArubaOSS(NetworkDriver):
     def __init__(
         self, hostname, username, password, timeout=60, optional_args=None
     ):
+        """
+        Initialize Class ArubaOSS.
+
+        @param hostname: Hostname of the device
+        @param username: Username for the login
+        @param password: Password for the login
+        @param timeout: timeout to be passed to Request-Futures
+        @param optional_args: Optional Args to be passed to Request-Futures
+        """
         if not optional_args:
             optional_args = {}
 
@@ -120,6 +131,15 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         return super(ArubaOSS, self).compliance_report()
+
+    def confirm_commit(self):
+        """
+        Confirm the changes requested via commit_config when commit_confirm=True.
+
+        Should cause self.has_pending_commit to return False when done.
+        @return: None
+        """
+        return confirm_commit(self=self)
 
     def connection_tests(self):
         """
@@ -281,6 +301,9 @@ class ArubaOSS(NetworkDriver):
         """
         Get LLDP neighbor information.
 
+        NOTE: Parent Interface is always empty,
+        as the information isn't available.
+
         :param interface:
         :return:
         """
@@ -291,6 +314,13 @@ class ArubaOSS(NetworkDriver):
     def get_mac_address_table(self):
         """
         Get the mac-address table of the device.
+
+        "static", "moves" and "last_move" have always default values,
+        as there is no helpful information from the device.
+
+        static: False,  # not supported
+        moves: 0,  # not supported
+        last_move: 0.0  # not supported
 
         :return:
         """
@@ -401,6 +431,14 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         return super(ArubaOSS, self).get_users()
+
+    def has_pending_commit(self):
+        """
+        Boolean indicates if a commit_config that needs confirmed is in process.
+
+        :return Boolean
+        """
+        return has_pending_commit(self=self)
 
     def is_alive(self):
         """

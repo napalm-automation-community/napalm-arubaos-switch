@@ -3,6 +3,7 @@
 from napalm_arubaoss.helper.base import Connection
 from napalm_arubaoss.helper.commit_config import commit_config
 from napalm_arubaoss.helper.compare_config import compare_config
+from napalm_arubaoss.helper.confirm_commit import confirm_commit
 from napalm_arubaoss.helper.get_arp_table import get_arp_table
 from napalm_arubaoss.helper.get_config import get_config
 from napalm_arubaoss.helper.get_facts import get_facts
@@ -13,6 +14,7 @@ from napalm_arubaoss.helper.get_mac_address_table import get_mac_address_table
 from napalm_arubaoss.helper.get_ntp_servers import get_ntp_servers
 from napalm_arubaoss.helper.get_ntp_stats import get_ntp_stats
 from napalm_arubaoss.helper.get_route_to import get_route_to
+from napalm_arubaoss.helper.has_pending_commit import has_pending_commit
 from napalm_arubaoss.helper.is_alive import is_alive
 from napalm_arubaoss.helper.load_merge_candidate import load_merge_candidate
 from napalm_arubaoss.helper.load_replace_candidate import load_replace_candidate
@@ -36,6 +38,7 @@ __all__ = (
     "commit_config",
     "compare_config",
     "config_batch",
+    "confirm_commit",
     "get_mac_address_table",
     "get_facts",
     "get_arp_table",
@@ -46,6 +49,7 @@ __all__ = (
     "get_ntp_stats",
     "get_ntp_servers",
     "get_route_to",
+    "has_pending_commit",
     "is_alive",
     "load_merge_candidate",
     "load_replace_candidate",
