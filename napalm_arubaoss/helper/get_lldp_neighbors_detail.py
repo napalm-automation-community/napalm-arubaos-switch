@@ -7,7 +7,7 @@ logger = logging.getLogger("arubaoss.helper.get_lldp_neighbors_detail")
 
 def get_lldp_neighbors_detail(self, *args, **kwargs):
     """Get LLDP neighbor information."""
-    url = self.connection.config["api_url"] + "/lldp/remote-device"
+    url = self.connection.config["api_url"] + "lldp/remote-device"
     resp = self.connection.get(url)
     logger.debug("API returned {}".format(resp.status_code))
 
@@ -18,6 +18,7 @@ def get_lldp_neighbors_detail(self, *args, **kwargs):
             if not neighbor_table.get(port):
                 neighbor_table[port] = []
             remote_device = {
+                "parent_interface": "",
                 "remote_system_name": neighbor.get("system_name"),
                 "remote_chassis_id": neighbor.get("chassis_id"),
                 "remote_port": neighbor.get("port_id"),
