@@ -19,9 +19,9 @@ def get_mac_address_table(self):
                 "interface": entry["port_id"],
                 "vlan": entry["vlan_id"],
                 "active": True,
-                # 'static': False,  # not supported
-                # 'moves': 0,  # not supported
-                # 'last_move': 0.0  # not supported
+                "static": False,  # not supported
+                "moves": 0,  # not supported
+                "last_move": 0.0  # not supported
             }
             table.append(item)
 
