@@ -155,6 +155,9 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
+        if self.has_pending_commit():
+            self.load_merge_candidate(config="no job ROLLBACK")
+
         backup_config(self=self, destination="REST_Payload_Backup")
 
     def get_arp_table(self, vrf=""):
