@@ -17,7 +17,7 @@ def has_pending_commit(self):
     running = get_config(self=self, retrieve='running')['running'][:-2]
 
     for line in running.split("\n"):
-        if line.find("ROLLBACK") > 1:
+        if line.find("ROLLBACK") > 0:
             return True
 
     return False
