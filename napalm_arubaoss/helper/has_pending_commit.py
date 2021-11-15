@@ -2,13 +2,10 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
 from napalm_arubaoss.helper.get_config import get_config
 
 
 logger = logging.getLogger('arubaoss.helper.has_pending_commit')
-
-connection = Connection()
 
 
 def has_pending_commit(self):
@@ -20,7 +17,7 @@ def has_pending_commit(self):
     running = get_config(self=self, retrieve='running')['running'][:-2]
 
     for line in running.split("\n"):
-        if line.find("ROLLBACK"):
+        if line.find("ROLLBACK") > 1:
             return True
 
     return False
