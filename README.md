@@ -10,6 +10,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * commit_config()                 ✅
     * compare_config()                ✅
     * compliance_report()             ✅
+    * confirm_commit()                ✅
     * discard_config()                ✅  
     * get_arp_table()                 ✅
     * get_bgp_config()                ❌*
@@ -35,6 +36,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * get_route_to()                  ✅
     * get_snmp_information()          ❌  - Planned
     * get_users()                     ❌  - Planned
+    * has_pending()                   ✅
     * is_alive()                      ✅
     * load_merge_candidate()          ✅**
     * load_replace_candidate()        ✅
