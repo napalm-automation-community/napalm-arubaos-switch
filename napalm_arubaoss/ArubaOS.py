@@ -47,21 +47,25 @@ class ArubaOSS(NetworkDriver):
     """Class for connecting to aruba-os devices using the rest-api."""
 
     def __init__(
-        self, hostname, username, password, timeout=60, optional_args=None
+            self,
+            hostname,
+            username,
+            password,
+            timeout=60,
+            optional_args=None
     ):
         """
         Initialize Class ArubaOSS.
 
-        @param hostname: Hostname of the device
-        @param username: Username for the login
-        @param password: Password for the login
-        @param timeout: timeout to be passed to Request-Futures
-        @param optional_args: Optional Args to be passed to Request-Futures
+        :param hostname: Hostname of the device
+        :param username: Username for the login
+        :param password: Password for the login
+        :param timeout: timeout to be passed to Request-Futures
+        :param optional_args: Optional Args to be passed to Request-Futures
         """
         if not optional_args:
             optional_args = {}
 
-        """Instantiate the module."""
         if optional_args.get("debugging", False):
             logger.setLevel(logging.DEBUG)
             streamhandler.setLevel(logging.DEBUG)
@@ -137,7 +141,7 @@ class ArubaOSS(NetworkDriver):
         Confirm the changes requested via commit_config when commit_confirm=True.
 
         Should cause self.has_pending_commit to return False when done.
-        @return: None
+        :return: None
         """
         return confirm_commit(self=self)
 

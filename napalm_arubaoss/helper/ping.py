@@ -9,6 +9,7 @@ def ping(self, destination, timeout=2):
     """
     Execute ping on the device and returns a dictionary with the result.
 
+    :param self: object from class
     :param destination: needed argument
     :param timeout: not implemented as not available from device
     :return: returns a dictionary containing the hops and probes

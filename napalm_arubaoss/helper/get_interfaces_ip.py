@@ -7,9 +7,14 @@ logger = logging.getLogger("arubaoss.helper.get_interfaces_ip")
 
 
 def get_interfaces_ip(self):
-    """Get IP interface IP addresses."""
-    "Looks like there's a bug n ArubaOS and is not returning IPv6"
+    """
+    Get IP interface IP addresses.
 
+    !!! Looks like there's a bug n ArubaOS and is not returning IPv6
+
+    :param self: object from class
+    :return:
+    """
     url = self.connection.config["api_url"] + "ipaddresses"
     output = {}
     resp = self.connection.get(url)

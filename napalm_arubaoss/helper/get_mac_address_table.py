@@ -8,7 +8,12 @@ logger = logging.getLogger("arubaoss.helper.get_mac_address_table")
 
 
 def get_mac_address_table(self):
-    """Get the mac-address table of the device."""
+    """
+    Get the mac-address table of the device.
+
+    :param self: object from class
+    :return:
+    """
     url = self.connection.config["api_url"] + "mac-table"
     resp = self.connection.get(url)
     if resp.status_code == 200:

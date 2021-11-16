@@ -12,6 +12,7 @@ def get_route_to(self, destination="", protocol=""):
     """
     Get route to destination.
 
+    :param self: object from class
     :param destination:
     :param protocol:
     :return:

@@ -6,7 +6,12 @@ logger = logging.getLogger("arubaoss.helper.get_ntp_stats")
 
 
 def get_ntp_stats(self):
-    """Get NTP peer statistics."""
+    """
+    Get NTP peer statistics.
+
+    :param self: object from class
+    :return:
+    """
     out = []
     base_url = self.connection.config["api_url"]
     ret = self.connection.get(

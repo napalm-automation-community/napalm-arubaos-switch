@@ -21,7 +21,12 @@ def read_candidate(candidate):
 
 
 def str_to_b64(spayload):
-    """Convert from str to b64 for aoss API."""
+    """
+    Convert from str to b64 for aoss API.
+
+    :param spayload:
+    :return:
+    """
     payload_b64 = base64.b64encode(spayload.encode())
 
     return payload_b64.decode("utf-8")
@@ -31,6 +36,7 @@ def config_batch(self, cmd_list):
     """
     Load a batch of configuration commands into the running-config.
 
+    :param self: object from class
     :param cmd_list:
     :return:
     """
@@ -57,11 +63,18 @@ def config_batch(self, cmd_list):
 
 
 def backup_config(self, config="running", destination="backup"):
-    """Backup config."""
-    """Supported configs
+    """
+    Backup config.
+
+    Supported configs
     API:
         - "CT_RUNNING_CONFIG",
         - "CT_STARTUP_CONFIG"
+
+    :param self: object from class
+    :param config:
+    :param destination:
+    :return:
     """
     url = self.connection.config["api_url"] + "system/config/cfg_backup_files"
     payload = {}
@@ -69,7 +82,10 @@ def backup_config(self, config="running", destination="backup"):
         "backup": "backup_{}".format(config),
         "REST_Payload_Backup": "REST_Payload_Backup",
     }
-    conf_map = {"running": "CT_RUNNING_CONFIG", "startup": "CT_STARTUP_CONFIG"}
+    conf_map = {
+        "running": "CT_RUNNING_CONFIG",
+        "startup": "CT_STARTUP_CONFIG"
+    }
     payload["file_name"] = dest_map.get(destination)
     payload["config_type"] = conf_map.get(config, False)
 
@@ -89,6 +105,7 @@ def transaction_status(self, url):
     """
     Wait for the requested transaction to finish within the specified timeout.
 
+    :param self: object from class
     :param url:
     :return:
     """
@@ -106,7 +123,13 @@ def transaction_status(self, url):
 
 
 def commit_candidate(self, config):
-    """Commit the candidate configuration."""
+    """
+    Commit the candidate configuration.
+
+    :param self: object from class
+    :param config:
+    :return:
+    """
     url = self.connection.config["api_url"] + "system/config/cfg_restore"
     data = {"server_type": "ST_FLASH", "file_name": config, "is_oobm": False}
     cmd_post = self.connection.post(url, json=data)

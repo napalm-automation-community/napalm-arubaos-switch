@@ -16,6 +16,7 @@ def commit_config(self, message="", revert_in=None):
     """
     Backups and commit the configuration, and handles commit confirm.
 
+    :param self: object from class
     :param message: Optional - configuration session commit message
     :type message: str
     :param revert_in: Optional - number of seconds before the configuration

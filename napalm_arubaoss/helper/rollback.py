@@ -9,7 +9,12 @@ logger = logging.getLogger("arubaoss.helper.rollback")
 
 
 def rollback(self):
-    """Rollback configuration."""
+    """
+    Rollback configuration.
+
+    :param self: object from class
+    :return:
+    """
     diff = compare_config(self=self)
     if diff and isinstance(diff, dict):
         if not (len(diff.get("diff_add_list")) and len(diff.get("diff_remove_list"))):

@@ -9,7 +9,13 @@ logger = logging.getLogger("arubaoss.helper.get_arp_table")
 
 
 def get_arp_table(self, vrf):
-    """Get device's ARP table."""
+    """
+    Get device's ARP table.
+
+    :param self: object from class
+    :param vrf: not supported
+    :return:
+    """
     if vrf:
         msg = "VRF support has not been added " \
               "for this getter on this platform."

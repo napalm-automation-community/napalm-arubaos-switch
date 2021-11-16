@@ -7,7 +7,12 @@ logger = logging.getLogger("arubaoss.helper.compare_config")
 
 
 def compare_config(self):
-    """Compare the running config with the candidate one."""
+    """
+    Compare the running config with the candidate one.
+
+    :param self: object from class
+    :return:
+    """
     url = self.connection.config["api_url"] + "system/config/cfg_restore/latest_diff"
     check_url = url + "/status"
     data = {

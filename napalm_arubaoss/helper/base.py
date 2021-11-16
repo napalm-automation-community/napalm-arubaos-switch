@@ -142,7 +142,12 @@ class Connection:
         return ret.result()
 
     def cli(self, commands):
-        """Run CLI commands through the REST API."""
+        """
+        Run CLI commands through the REST API.
+
+        :param commands:
+        :return:
+        """
         self.cli_output = {}
 
         url = self.config["api_url"] + "cli"

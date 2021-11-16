@@ -7,11 +7,11 @@ logger = logging.getLogger("arubaoss.helper.is_alive")
 
 
 def is_alive(self):
-    """Check if device connection is alive."""
-    """check if session cookie is still valid
-    Returns:
-        True - Session cookie is still valid
-        None - There's an error
+    """
+    Check if device connection is alive.
+
+    :param self: object from class
+    :return:
     """
     url = self.connection.config["api_url"] + "system"
     endpoint = self.connection.get(url)

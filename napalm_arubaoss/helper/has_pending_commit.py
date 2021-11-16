@@ -12,6 +12,7 @@ def has_pending_commit(self):
     """
     Boolean indicates if a commit_config that needs confirmed is in process.
 
+    :param self: object from class
     :return Boolean
     """
     running = get_config(self=self, retrieve='running')['running'][:-2]

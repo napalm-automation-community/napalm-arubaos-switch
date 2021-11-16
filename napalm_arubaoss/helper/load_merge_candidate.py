@@ -9,13 +9,18 @@ logger = logging.getLogger("arubaoss.helper.load_merge_candidate")
 
 
 def load_merge_candidate(self, filename=None, config=None):
-    """Merge candidate configuration with the running one."""
     """
+    Merge candidate configuration with the running one.
+
     Imperative config change:
      Merge new config with existing one. There's no config validation
      nor atomic commit!. Only configuration commands are supported,
      "configure terminal" is not required. Use with caution.
 
+    :param self: object from class
+    :param filename:
+    :param config:
+    :return:
     """
     if filename:
         config = read_candidate(candidate=filename)
