@@ -2,58 +2,91 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-
-logger = logging.getLogger('arubaoss.helper.get_facts')
-
-connection = Connection()
+logger = logging.getLogger("arubaoss.helper.get_facts")
 
 
-def get_facts():
-    """Get general device information."""
-    system_status_url = connection.config['api_url'] + 'system/status'
-    switch_status_url = connection.config['api_url'] + 'system/status/switch'
-    dns_url = connection.config['api_url'] + 'dns'
+def get_facts(self):
+    """
+    Get general device information.
+
+    :param self: object from class
+    :return:
+    """
+    url = "{base_url}{endpoint}"
+
+    system_status_url = url.format(
+        base_url=self.connection.config["api_url"],
+        endpoint="system/status"
+    )
+    switch_status_url = url.format(
+        base_url=self.connection.config["api_url"],
+        endpoint="system/status/switch"
+    )
+    dns_url = url.format(
+        base_url=self.connection.config["api_url"],
+        endpoint="dns"
+    )
+
     out = {
-        'vendor': 'HPE Aruba',
-        'interface_list': []
+        "uptime": -1,
+        "vendor": "HPE Aruba",
+        "model": "",
+        "hostname": "",
+        "fqdn": "",
+        "os_version": "",
+        "serial_number": "",
+        "interface_list": [],
+
     }
 
-    call = connection.get(system_status_url)
+    call = self.connection.get(system_status_url)
 
     # If it's a Stack, use `/system/status/global_info`
     if call.status_code == 404:
-        system_status_url = connection.config['api_url'] +\
-            'system/status/global_info'
-        call = connection.get(system_status_url)
+        system_status_url = url.format(
+            base_url=self.connection.config["api_url"],
+            endpoint="system/status/global_info"
+        )
+        call = self.connection.get(system_status_url)
+
     if call.ok:
         rest_out = call.json()
-        out['hostname'] = rest_out['name']
-        out['os_version'] = rest_out['firmware_version']
-        out['serial_number'] = rest_out.get('serial_number', '')
-        out['model'] = rest_out.get('product_model', '')
+        out["hostname"] = rest_out.get("name", "")
+        out["os_version"] = rest_out.get("firmware_version", "")
+        out["serial_number"] = rest_out.get("serial_number", "")
+        out["model"] = rest_out.get("product_model", "")
 
         # get domain name to generate the FQDN
-        call = connection.get(dns_url)
+        call = self.connection.get(dns_url)
         if call.ok:
             rest_out = call.json()
             # return "{{hostname}}." if no domain is configured
-            out['fqdn'] = out['hostname'] + "." +\
-                rest_out.get('dns_domain_names', '.')[0]
+            domain_names = rest_out.get("dns_domain_names")
+            domain = ".{}".format(domain_names[0]) if domain_names else "."
+            out["fqdn"] = "{hostname}{domain}".format(
+                hostname=out["hostname"],
+                domain=domain
+            )
 
     # Get interface list
-    call = connection.get(switch_status_url)
+    call = self.connection.get(switch_status_url)
     if call.ok:
         rest_out = call.json()
-        if rest_out.get('switch_type', 'ST_STANDALONE') == 'ST_STACKED':
-            serial_url = connection.config['api_url'] +\
-                'system/status/members/1'
-            call = connection.get(serial_url)
+        if rest_out.get("switch_type", "ST_STANDALONE") == "ST_STACKED":
+            serial_url = url.format(
+                base_url=self.connection.config["api_url"],
+                endpoint="system/status/members/1"
+            )
+            call = self.connection.get(serial_url)
+
             if call.ok:
-                out['serial_number'] = call.json().get('serial_number')
-                out['model'] = call.json().get('product_model')
-        for blade in rest_out['blades']:
-            for ports in blade['data_ports']:
-                out['interface_list'].append(ports['port_name'])
+                out["serial_number"] = call.json().get("serial_number", "")
+                out["model"] = call.json().get("product_model", "")
+
+        for blade in rest_out.get("blades", []):
+            for ports in blade.get("data_ports", []):
+                out["interface_list"].append(
+                    ports.get("port_name", "")
+                )
 
     return out

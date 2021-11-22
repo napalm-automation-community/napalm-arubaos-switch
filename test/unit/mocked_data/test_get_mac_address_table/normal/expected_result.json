@@ -1,0 +1,56 @@
+[
+  {
+    "mac": "ec:00:8b:f7:00:e5",
+    "interface": "Trk1",
+    "vlan": 1,
+    "active": true,
+    "static": false,
+    "moves": 0,
+    "last_move": 0.0
+  },
+  {
+    "mac": "4e:11:14:b1:11:3c",
+    "interface": "Trk1",
+    "vlan": 48,
+    "active": true,
+    "static": false,
+    "moves": 0,
+    "last_move": 0.0
+  },
+  {
+    "mac": "78:22:77:60:22:3f",
+    "interface": "3/44",
+    "vlan": 64,
+    "active": true,
+    "static": false,
+    "moves": 0,
+    "last_move": 0.0
+  },
+  {
+    "mac": "00:33:98:16:33:85",
+    "interface": "2/32",
+    "vlan": 64,
+    "active": true,
+    "static": false,
+    "moves": 0,
+    "last_move": 0.0
+  },
+  {
+    "mac": "e0:44:43:5d:44:b3",
+    "interface": "Trk1",
+    "vlan": 104,
+    "active": true,
+    "static": false,
+    "moves": 0,
+    "last_move": 0.0
+  },
+  {
+    "mac": "00:55:98:17:55:78",
+    "interface": "4/25",
+    "vlan": 64,
+    "active": true,
+    "static": false,
+    "moves": 0,
+    "last_move": 0.0
+  }
+]

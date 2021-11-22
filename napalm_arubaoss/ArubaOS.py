@@ -7,6 +7,7 @@ from napalm_arubaoss.helper import (
     backup_config,
     commit_config,
     compare_config,
+    confirm_commit,
     get_mac_address_table,
     get_facts,
     get_arp_table,
@@ -17,22 +18,23 @@ from napalm_arubaoss.helper import (
     get_ntp_stats,
     get_ntp_servers,
     get_route_to,
+    has_pending_commit,
     is_alive,
     load_merge_candidate,
     load_replace_candidate,
     ping,
     rollback,
-    traceroute
+    traceroute,
 )
 
 from napalm.base.base import NetworkDriver
 
-logger = logging.getLogger('arubaoss')
+logger = logging.getLogger("arubaoss")
 logger.setLevel(logging.INFO)
 
 stream_formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 streamhandler = logging.StreamHandler()
 streamhandler.setFormatter(stream_formatter)
@@ -47,17 +49,28 @@ class ArubaOSS(NetworkDriver):
     def __init__(
             self,
             hostname,
-            username='',
-            password='',
-            timeout=10,
+            username,
+            password,
+            timeout=60,
             optional_args=None
     ):
-        """Instantiate the module."""
-        if optional_args.get('debugging', False):
+        """
+        Initialize Class ArubaOSS.
+
+        :param hostname: Hostname of the device
+        :param username: Username for the login
+        :param password: Password for the login
+        :param timeout: timeout to be passed to Request-Futures
+        :param optional_args: Optional Args to be passed to Request-Futures
+        """
+        if not optional_args:
+            optional_args = {}
+
+        if optional_args.get("debugging", False):
             logger.setLevel(logging.DEBUG)
             streamhandler.setLevel(logging.DEBUG)
 
-        if optional_args.get('disable_ssl_warnings', False):
+        if optional_args.get("disable_ssl_warnings", False):
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
         self.hostname = hostname
@@ -91,15 +104,15 @@ class ArubaOSS(NetworkDriver):
 
         return ret
 
-    def commit_config(self, message=None, confirm=0):
+    def commit_config(self, message="", revert_in=None):
         """
         Backups and commit the configuration, and handles commit confirm.
 
         :param message:
-        :param confirm:
+        :param revert_in:
         :return:
         """
-        ret = commit_config(confirm=confirm)
+        ret = commit_config(self=self, revert_in=revert_in)
 
         return ret
 
@@ -109,7 +122,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = compare_config()
+        ret = compare_config(self=self)
 
         return ret
 
@@ -122,6 +135,15 @@ class ArubaOSS(NetworkDriver):
         :return:
         """
         return super(ArubaOSS, self).compliance_report()
+
+    def confirm_commit(self):
+        """
+        Confirm the changes requested via commit_config when commit_confirm=True.
+
+        Should cause self.has_pending_commit to return False when done.
+        :return: None
+        """
+        return confirm_commit(self=self)
 
     def connection_tests(self):
         """
@@ -137,21 +159,23 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        backup_config(destination='REST_Payload_Backup')
+        if self.has_pending_commit():
+            self.load_merge_candidate(config="no job ROLLBACK")
 
-    def get_arp_table(self, *args, **kwargs):
+        backup_config(self=self, destination="REST_Payload_Backup")
+
+    def get_arp_table(self, vrf=""):
         """
         Get device's ARP table.
 
-        :param args:
-        :param kwargs:
+        :param vrf:
         :return:
         """
-        ret = get_arp_table(self_obj=self)
+        ret = get_arp_table(self=self, vrf=vrf)
 
         return ret
 
-    def get_bgp_config(self, group='', neighbor=''):
+    def get_bgp_config(self, group="", neighbor=""):
         """
         Get BGP config - NOT IMPLEMENTED.
 
@@ -169,7 +193,7 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_bgp_neighbors()
 
-    def get_bgp_neighbors_detail(self, neighbor_address=''):
+    def get_bgp_neighbors_detail(self, neighbor_address=""):
         """
         Get BGP Neighbors detail - NOT IMPLEMENTED.
 
@@ -178,15 +202,17 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_bgp_neighbors_detail()
 
-    def get_config(self, retrieve='all', full=False):
+    def get_config(self, retrieve="all", full=False, sanitized=False):
         """
         Get configuration stored on the device.
 
         :param retrieve:
         :param full:
+        :param sanitized:
         :return:
         """
-        ret = get_config(retrieve=retrieve)
+        # TODO check why "full" exists
+        ret = get_config(self=self, retrieve=retrieve)
 
         return ret
 
@@ -220,7 +246,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_facts()
+        ret = get_facts(self=self)
 
         return ret
 
@@ -256,7 +282,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_interfaces_ip()
+        ret = get_interfaces_ip(self=self)
 
         return ret
 
@@ -274,19 +300,21 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_lldp_neighbors()
+        ret = get_lldp_neighbors(self=self)
 
         return ret
 
-    def get_lldp_neighbors_detail(self, *args, **kwargs):
+    def get_lldp_neighbors_detail(self, interface=""):
         """
         Get LLDP neighbor information.
 
-        :param args:
-        :param kwargs:
+        NOTE: Parent Interface is always empty,
+        as the information isn't available.
+
+        :param interface:
         :return:
         """
-        ret = get_lldp_neighbors_detail(*args, **kwargs)
+        ret = get_lldp_neighbors_detail(self=self, interface=interface)
 
         return ret
 
@@ -294,13 +322,20 @@ class ArubaOSS(NetworkDriver):
         """
         Get the mac-address table of the device.
 
+        "static", "moves" and "last_move" have always default values,
+        as there is no helpful information from the device.
+
+        static: False,  # not supported
+        moves: 0,  # not supported
+        last_move: 0.0  # not supported
+
         :return:
         """
-        ret = get_mac_address_table()
+        ret = get_mac_address_table(self=self)
 
         return ret
 
-    def get_network_instances(self, name=''):
+    def get_network_instances(self, name=""):
         """
         Get network instances - NOT IMPLEMENTED.
 
@@ -318,7 +353,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_servers()
+        ret = get_ntp_servers(self=self)
 
         return ret
 
@@ -330,7 +365,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_servers()
+        ret = get_ntp_servers(self=self)
 
         return ret
 
@@ -340,7 +375,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = get_ntp_stats()
+        ret = get_ntp_stats(self=self)
 
         return ret
 
@@ -371,18 +406,19 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_probes_results()
 
-    def get_route_to(self, destination='', protocol=''):
+    def get_route_to(self, destination="", protocol="", longer=False):
         """
         Get route to destination.
 
         :param destination:
         :param protocol:
+        :param longer:
         :return:
         """
         ret = get_route_to(
+            self=self,
             destination=destination,
-            protocol=protocol,
-            self_obj=self
+            protocol=protocol
         )
 
         return ret
@@ -403,13 +439,21 @@ class ArubaOSS(NetworkDriver):
         """
         return super(ArubaOSS, self).get_users()
 
+    def has_pending_commit(self):
+        """
+        Boolean indicates if a commit_config that needs confirmed is in process.
+
+        :return Boolean
+        """
+        return has_pending_commit(self=self)
+
     def is_alive(self):
         """
         Is alive method.
 
         :return:
         """
-        ret = is_alive()
+        ret = is_alive(self=self)
 
         return ret
 
@@ -426,7 +470,9 @@ class ArubaOSS(NetworkDriver):
         :param config:
         :return:
         """
-        ret = load_merge_candidate(filename=filename, config=config)
+        ret = load_merge_candidate(
+            self=self, filename=filename, config=config
+        )
 
         return ret
 
@@ -446,16 +492,14 @@ class ArubaOSS(NetworkDriver):
         :param config:
         :return:
         """
-        ret = load_replace_candidate(filename=filename, config=config)
+        ret = load_replace_candidate(
+            self=self, filename=filename, config=config
+        )
 
         return ret
 
     def load_template(
-            self,
-            template_name,
-            template_source=None,
-            template_path=None,
-            **template_vars
+        self, template_name, template_source=None, template_path=None, **template_vars
     ):
         """
         Load template - NOT IMPLEMENTED.
@@ -479,20 +523,21 @@ class ArubaOSS(NetworkDriver):
             username=self.username,
             password=self.password,
             timeout=self.timeout,
-            optional_args=self.optional_args
+            optional_args=self.optional_args,
         )
 
         return True
 
     def ping(
-            self,
-            destination,
-            source='',
-            timeout=2,
-            ttl=255,
-            size=100,
-            count=5,
-            vrf=''
+        self,
+        destination,
+        source="",
+        ttl=255,
+        timeout=2,
+        size=100,
+        count=5,
+        vrf="",
+        source_interface=""
     ):
         """
         Execute ping on the device and returns a dictionary with the result.
@@ -500,13 +545,14 @@ class ArubaOSS(NetworkDriver):
         :param destination: needed argument
         :param source: not implemented as not available from device
         :param ttl: not implemented as not available from device
-        :param timeout: not implemented as not available from device
+        :param timeout: Maximum seconds to wait after sending final packet
         :param vrf: not implemented as not available from device
         :param size: not implemented as not available from device
         :param count: not implemented as not available from device
+        :param source_interface: not  implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
-        ret = ping(destination=destination, timeout=timeout)
+        ret = ping(self=self, destination=destination, timeout=timeout)
         return ret
 
     def post_connection_tests(self):
@@ -531,18 +577,11 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        ret = rollback()
+        ret = rollback(self=self)
 
         return ret
 
-    def traceroute(
-            self,
-            destination,
-            source='',
-            ttl=255,
-            timeout=2,
-            vrf=''
-    ):
+    def traceroute(self, destination, source="", ttl=255, timeout=2, vrf=""):
         """
         Execute traceroute on the device.
 
@@ -553,6 +592,6 @@ class ArubaOSS(NetworkDriver):
         :param vrf: not implemented as not available from device
         :return: returns a dictionary containing the hops and probes
         """
-        ret = traceroute(destination=destination)
+        ret = traceroute(self=self, destination=destination)
 
         return ret

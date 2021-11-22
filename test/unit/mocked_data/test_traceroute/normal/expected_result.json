@@ -1,0 +1,99 @@
+{
+  "success": {
+    "1": {
+      "probes": {
+        "1": {
+          "rtt": 2.0,
+          "ip_address": "10.20.4.1",
+          "host_name": ""
+        },
+        "2": {
+          "rtt": 1.0,
+          "ip_address": "10.20.4.1",
+          "host_name": ""
+        },
+        "3": {
+          "rtt": 2.0,
+          "ip_address": "10.20.4.1",
+          "host_name": ""
+        }
+      }
+    },
+    "2": {
+      "probes": {
+        "1": {
+          "rtt": 0.0,
+          "ip_address": "10.191.253.109",
+          "host_name": ""
+        },
+        "2": {
+          "rtt": 1.0,
+          "ip_address": "10.191.253.109",
+          "host_name": ""
+        },
+        "3": {
+          "rtt": 1.0,
+          "ip_address": "10.191.253.109",
+          "host_name": ""
+        }
+      }
+    },
+    "3": {
+      "probes": {
+        "1": {
+          "rtt": 6.0,
+          "ip_address": "10.191.250.69",
+          "host_name": ""
+        },
+        "2": {
+          "rtt": 5.0,
+          "ip_address": "10.191.250.69",
+          "host_name": ""
+        },
+        "3": {
+          "rtt": 5.0,
+          "ip_address": "10.191.250.69",
+          "host_name": ""
+        }
+      }
+    },
+    "4": {
+      "probes": {
+        "1": {
+          "rtt": 20.0,
+          "ip_address": "142.251.225.135",
+          "host_name": ""
+        },
+        "2": {
+          "rtt": 21.0,
+          "ip_address": "142.251.48.177",
+          "host_name": ""
+        },
+        "3": {
+          "rtt": 22.0,
+          "ip_address": "142.250.224.133",
+          "host_name": ""
+        }
+      }
+    },
+    "5": {
+      "probes": {
+        "1": {
+          "rtt": 20.0,
+          "ip_address": "8.8.8.8",
+          "host_name": "dns.google"
+        },
+        "2": {
+          "rtt": 20.0,
+          "ip_address": "8.8.8.8",
+          "host_name": "dns.google"
+        },
+        "3": {
+          "rtt": 21.0,
+          "ip_address": "8.8.8.8",
+          "host_name": "dns.google"
+        }
+      }
+    }
+  }
+}

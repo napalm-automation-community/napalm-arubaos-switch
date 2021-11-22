@@ -2,45 +2,77 @@
 
 import logging
 
-from napalm_arubaoss.helper.base import Connection
-from napalm_arubaoss.helper.get_ntp_servers import get_ntp_servers
-
-logger = logging.getLogger('arubaoss.helper.get_ntp_stats')
-
-connection = Connection()
+logger = logging.getLogger("arubaoss.helper.get_ntp_stats")
 
 
-def get_ntp_stats():
-    """Get NTP peer statistics."""
+def get_ntp_stats(self):
+    """
+    Get NTP peer statistics.
+
+    :param self: object from class
+    :return:
+    """
     out = []
-    associations = get_ntp_servers()
+    base_url = self.connection.config["api_url"]
+    ret = self.connection.get(
+        f"{base_url}monitoring/ntp/servers"
+    )
 
-    for association in associations.keys():
-        url = '{api_url}monitoring/ntp/associations/detail/{association}'.format(
-            api_url=connection.config['api_url'],
-            association=association
-        )
+    ret_json = ret.json() if hasattr(ret, "json") else {}
 
-        resp = connection.get(url)
+    ntp_ips = [
+        address.get("Server address")
+        for address in ret_json.get("NTP_Server_Address_Information", [])
+    ]
+
+    for association in ntp_ips:
+        url = f"{base_url}monitoring/ntp/associations/detail/{association}"
+
+        resp = self.connection.get(url)
         if resp.status_code == 200:
-            ntp_entry = {
-                'remote': resp.json()['IP Address'],
-                'referenceid': resp.json()['Reference ID'],
-                'stratum': int(resp.json()['Stratum']),
-                'type': resp.json()['Peer Mode'],
-                'when': resp.json()['Origin Time'],
-                'hostpoll': int(resp.json()['Peer Poll Intvl']),
-                'reachability': int(resp.json()['Reach']),
-                'delay': float(resp.json()['Root Delay'].split(' ')[0]),
-                'offset': float(resp.json()['Offset'].split(' ')[0]),
-                'jitter': float(resp.json()['Root Dispersion'].split(' ')[0])
-            }
+            data = resp.json() if hasattr(resp, "json") else {}
 
-            if resp.json()['Status'].find("Master") == -1:
-                ntp_entry['synchronized'] = False
-            else:
-                ntp_entry['synchronized'] = True
+            ntp_entry = _create_ntp_entry(data)
 
-            out.append(ntp_entry)
+            if ntp_entry:
+                out.append(ntp_entry)
+
+    if not ntp_ips:
+        # assumes no IPs have been configured but a name
+        url = f"{base_url}monitoring/ntp/associations/detail"
+        resp = self.connection.get(url)
+
+        if resp.status_code == 200:
+            data = resp.json() if hasattr(resp, "json") else {}
+
+            ntp_entry = _create_ntp_entry(data)
+
+            if ntp_entry:
+                out.append(ntp_entry)
 
     return out
+
+
+def _create_ntp_entry(data):
+    if not data:
+        return None
+
+    ntp_entry = {
+        "remote": data.get("IP Address", ""),
+        "referenceid": data.get("Reference ID", ""),
+        "stratum": int(data.get("Stratum", 0)),
+        "type": data.get("Peer Mode", ""),
+        "when": data.get("Origin Time", ""),
+        "hostpoll": int(data.get("Peer Poll Intvl", 0)),
+        "reachability": int(data.get("Reach", 0)),
+        "delay": float(data.get("Root Delay", "").split(" ")[0]),
+        "offset": float(data.get("Offset", "").split(" ")[0]),
+        "jitter": float(data.get("Root Dispersion", "").split(" ")[0]),
+    }
+
+    if data.get("Status").find("Master") == -1:
+        ntp_entry["synchronized"] = False
+    else:
+        ntp_entry["synchronized"] = True
+
+    return ntp_entry

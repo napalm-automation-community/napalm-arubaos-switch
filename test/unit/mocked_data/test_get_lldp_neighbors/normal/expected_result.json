@@ -1,0 +1,8 @@
+{
+  "oobm": [
+    {
+      "hostname": "LAB-EDGE-SWITCH01",
+      "port": "GigabitEthernet1/0/8"
+    }
+  ]
+}

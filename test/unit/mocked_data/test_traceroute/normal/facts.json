@@ -1,0 +1,166 @@
+{
+  "trace-route": {
+    "status": 200,
+    "data": {
+      "ttl_data": [
+        {
+          "ttl_probe_data": [
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.20.4.1"
+                }
+              },
+              "probe_time_in_millis": 2
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.20.4.1"
+                }
+              },
+              "probe_time_in_millis": 1
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.20.4.1"
+                }
+              },
+              "probe_time_in_millis": 2
+            }
+          ]
+        },
+        {
+          "ttl_probe_data": [
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.191.253.109"
+                }
+              },
+              "probe_time_in_millis": 0
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.191.253.109"
+                }
+              },
+              "probe_time_in_millis": 1
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.191.253.109"
+                }
+              },
+              "probe_time_in_millis": 1
+            }
+          ]
+        },
+        {
+          "ttl_probe_data": [
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.191.250.69"
+                }
+              },
+              "probe_time_in_millis": 6
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.191.250.69"
+                }
+              },
+              "probe_time_in_millis": 5
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "10.191.250.69"
+                }
+              },
+              "probe_time_in_millis": 5
+            }
+          ]
+        },
+        {
+          "ttl_probe_data": [
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "142.251.225.135"
+                }
+              },
+              "probe_time_in_millis": 20
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "142.251.48.177"
+                }
+              },
+              "probe_time_in_millis": 21
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "142.250.224.133"
+                }
+              },
+              "probe_time_in_millis": 22
+            }
+          ]
+        },
+        {
+          "ttl_probe_data": [
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "8.8.8.8"
+                }
+              },
+              "probe_time_in_millis": 20
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "8.8.8.8"
+                }
+              },
+              "probe_time_in_millis": 20
+            },
+            {
+              "gateway": {
+                "ip_address": {
+                  "version": "IAV_IP_V4",
+                  "octets": "8.8.8.8"
+                }
+              },
+              "probe_time_in_millis": 21
+            }
+          ]
+        }
+      ],
+      "result": "TRR_OK",
+      "uri": "/trace-route"
+    }
+  }
+}

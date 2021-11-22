@@ -1,0 +1,27 @@
+{
+  "1.0.4.0/24": [
+    {
+      "protocol": "bgp",
+      "current_active": true,
+      "last_active": true,
+      "age": -1,
+      "next_hop": "NET_MGMT",
+      "outgoing_interface": "",
+      "selected_next_hop": true,
+      "preference": 0,
+      "inactive_reason": "",
+      "routing_table": "",
+      "protocol_attributes": {
+        "local_as": -1,
+        "remote_as": -1,
+        "peer_id": "",
+        "as_path": "",
+        "communities": -1,
+        "local_preference": -1,
+        "preference2": -1,
+        "metric": -1,
+        "metric2": -1
+      }
+    }
+  ]
+}

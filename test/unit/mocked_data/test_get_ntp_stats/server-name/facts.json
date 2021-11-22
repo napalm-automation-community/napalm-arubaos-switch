@@ -1,0 +1,47 @@
+{
+  "monitoring/ntp/servers": {
+    "status": 200,
+    "data": {
+      "NTP_Server_Name_Information": [
+        {
+          "Server Name": "de.pool.ntp.org",
+          "Resolved Address": "173.249.33.207",
+          "Server Status": "Success: NTP server active"
+        },
+        {
+          "Server Name": "0.de.pool.ntp.org",
+          "Resolved Address": "",
+          "Server Status": "Failed: NTP server not active"
+        }
+      ]
+    }
+  },
+  "monitoring/ntp/associations/detail": {
+    "status": 200,
+    "data": {
+      "IP Address": "173.249.33.207",
+      "Peer Mode": "Server",
+      "Status": "Config,Sane,Master",
+      "Peer Poll Intvl": 7,
+      "Stratum": 2,
+      "Root Delay": "0.01628 sec",
+      "Ref Assoc ID": 1,
+      "Root Dispersion": "0.00075 sec",
+      "Assoc Name": "NTP Association 1",
+      "Reach": 17,
+      "Reference ID": "205.46.178.169",
+      "Delay": "0.00000 sec",
+      "Our Mode": "Client",
+      "Offset": "0.00000 sec",
+      "Our Poll Intvl": 7,
+      "Precision": "2**-25",
+      "Dispersion": "15.53054 sec",
+      "Association In Packets": 11,
+      "Association Out Packets": 11,
+      "Association Error Packets": 0,
+      "Origin Time": "Wed Nov 10 18:01:18 2021",
+      "Receive Time": "Wed Nov 10 18:01:18 2021",
+      "Transmit Time": "Wed Nov 10 18:01:18 2021"
+    }
+  }
+}
