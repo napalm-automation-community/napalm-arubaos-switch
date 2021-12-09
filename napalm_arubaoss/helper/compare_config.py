@@ -1,6 +1,9 @@
 """Backups and commit the configuration, and handles commit confirm."""
 
 import logging
+
+from time import sleep
+
 from napalm.base.exceptions import CommandErrorException
 
 logger = logging.getLogger("arubaoss.helper.compare_config")
@@ -26,18 +29,24 @@ def compare_config(self):
     if not diff.ok:
         raise CommandErrorException("diff generation failed, raise status")
 
-    diff_output = self.connection.get(check_url)
+    for loop_round in range(1, 6):
+        # wait a second to give the device time to process
+        logger.debug(f"loop round \"{loop_round}\"")
+        sleep(1)
 
-    if not diff_output.status_code == 200:
-        raise CommandErrorException("diff generation failed, raise status")
+        diff_output = self.connection.get(check_url)
 
-    if (
-        not diff_output.json()["diff_add_list"]
-        and not diff_output.json()["diff_remove_list"]
-    ):
-        # return empty string to signal the candidate
-        # and running configs are the same
+        if not diff_output.status_code == 200:
+            raise CommandErrorException("diff generation failed, raise status")
 
-        return ""
-    else:
-        return diff_output.json()
+        if (
+            not diff_output.json()["diff_add_list"]
+            and not diff_output.json()["diff_remove_list"]
+        ):
+            if loop_round == 5:
+                # return empty string to signal the candidate
+                # and running configs are the same
+                return ""
+            continue
+        else:
+            return diff_output.json()
