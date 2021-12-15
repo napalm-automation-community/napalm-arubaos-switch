@@ -8,10 +8,14 @@ from json import JSONDecodeError
 
 from requests import Session
 from requests.models import Response
-from napalm.base.exceptions import ConnectAuthError
+from napalm.base.exceptions import ConnectAuthError, NapalmException
 
 
 logger = logging.getLogger("arubaoss.helper.base")
+
+
+class KeepAliveBoolError(NapalmException):
+    pass
 
 
 class Connection:
@@ -67,13 +71,24 @@ class Connection:
         self._apisession.headers = {
             "Content-Type": "application/json",
         }
-        self._apisession.keep_alive = optional_args.get(
+
+        keep_alive = optional_args.get(
             "keepalive",
             optional_args.get(
                 "keep_alive",
                 False
             )
         )
+
+        if not isinstance(keep_alive, bool):
+            raise KeepAliveBoolError(
+                "\"keepalive\"/\"keep_alive\" needs to be of type \"bool\""
+            )
+
+        if not keep_alive:
+            self._apisession.headers.update(
+                {"Connection": "close"}
+            )
 
         params = {"userName": self.username, "password": self.password}
 
