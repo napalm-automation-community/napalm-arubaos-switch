@@ -1,6 +1,5 @@
 napalm>=3.3.0
 netaddr
 requests
-requests-futures
 textfsm>=1.1.0
 urllib3

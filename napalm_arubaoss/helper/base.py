@@ -1,17 +1,21 @@
 """Create the Session."""
 
 
-from requests_futures.sessions import FuturesSession
-from requests.models import Response
-from concurrent.futures import as_completed
-from json import JSONDecodeError
 import base64
 import logging
 
-from napalm.base.exceptions import ConnectAuthError
+from json import JSONDecodeError
+
+from requests import Session
+from requests.models import Response
+from napalm.base.exceptions import ConnectAuthError, NapalmException
 
 
 logger = logging.getLogger("arubaoss.helper.base")
+
+
+class KeepAliveBoolError(NapalmException):
+    pass
 
 
 class Connection:
@@ -21,7 +25,7 @@ class Connection:
 
     def __init__(self):
         """Initialize the class."""
-        self._apisession = None
+        self._apisession: Session = Session()
 
         self.hostname = ""
         self.username = ""
@@ -62,13 +66,29 @@ class Connection:
 
         url = self.config["api_url"] + "login-sessions"
 
-        self._apisession = FuturesSession()
+        self._apisession = Session()
         self._apisession.verify = optional_args.get("ssl_verify", True)
         self._apisession.headers = {
             "Content-Type": "application/json",
-            # "Connection": "close"
         }
-        self._apisession.keep_alive = optional_args.get("keepalive", True)
+
+        keep_alive = optional_args.get(
+            "keepalive",
+            optional_args.get(
+                "keep_alive",
+                False
+            )
+        )
+
+        if not isinstance(keep_alive, bool):
+            raise KeepAliveBoolError(
+                "\"keepalive\"/\"keep_alive\" needs to be of type \"bool\""
+            )
+
+        if not keep_alive:
+            self._apisession.headers.update(
+                {"Connection": "close"}
+            )
 
         params = {"userName": self.username, "password": self.password}
 
@@ -103,7 +123,7 @@ class Connection:
         """
         ret = self._apisession.get(*args, **kwargs)
 
-        return ret.result()
+        return ret
 
     def post(self, *args, **kwargs) -> Response:
         """
@@ -115,7 +135,7 @@ class Connection:
         """
         ret = self._apisession.post(*args, **kwargs)
 
-        return ret.result()
+        return ret
 
     def put(self, *args, **kwargs) -> Response:
         """
@@ -127,7 +147,7 @@ class Connection:
         """
         ret = self._apisession.put(*args, **kwargs)
 
-        return ret.result()
+        return ret
 
     def delete(self, *args, **kwargs) -> Response:
         """
@@ -139,7 +159,7 @@ class Connection:
         """
         ret = self._apisession.delete(*args, **kwargs)
 
-        return ret.result()
+        return ret
 
     def cli(self, commands):
         """
@@ -156,28 +176,24 @@ class Connection:
             self.cli_output["error"] = "Provide a list of commands"
             return self.cli_output
 
-        async_calls = (
+        for command in commands:
             self._apisession.post(
                 url=url,
                 json={"cmd": command},
                 timeout=self.timeout,
-                # bug #4 - random delay while re-using TCP connection - workaround:
-                # always close the TCP connection
-                headers={"Content-Type": "application/json", "Connection": "close"},
                 hooks={
-                    "response": self._callback(output=self.cli_output, command=command)
-                },
+                    "response": self._callback(
+                        output=self.cli_output,
+                        command=command
+                    )
+                }
             )
-            for command in commands
-        )
-
-        [call.result() for call in as_completed(async_calls)]
 
         return self.cli_output
 
     def _callback(self, *args, **kwargs):
         """
-        Return Callback for async calls.
+        Return Callback for request calls.
 
         ArubaOSS.cli uses it.
 

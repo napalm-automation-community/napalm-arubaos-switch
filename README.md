@@ -80,6 +80,27 @@ rest-interface
 rest-interface session-idle-timeout 120 #optional
 ```
 
+### optional_args
+optional_args can be set during initialization like this:
+```Python
+from napalm import get_network_driver
+
+d = get_network_driver("arubaoss")
+
+with d('1.2.3.4', 'username', 'password', optional_args={'ssl_verify': False, "debugging": True}) as aruba:
+   print(aruba.get_config())
+```
+
+The following values can be set in optional_args:
+- ssl_verify: bool/str = defaults to **True** - will be passed to the requests object (description can be found [here](https://docs.python-requests.org/en/latest/_modules/requests/sessions/#Session.request))
+- keepalive: bool = defaults to **False** - sets the underlying TCP connection to either keep the connection or not and is a workaround for an issue with ArubaOS devices 
+  (discussed [here](https://community.arubanetworks.com/community-home/digestviewer/viewthread?MID=28798#bme4aa3703-e476-4880-9cb4-9b208f86b2f4))
+- keep_alive: bool = same as keepalive, just shadows it to be able to use the same keyword as in older Python requests versions
+- debugging: bool = defaults to **False** - sets the level of the logging handler to logging.DEBUG
+- disable_ssl_warnings: bool = defaults to **False** - disables ssl warnings from urllib3
+- api: string = defaults to **v6** - defines the API version
+- ssl: bool = defaults to **True**, sets http or https
+
 ### Saltstack
 To use the driver with Saltstack, you would typically need a proxy minion.
 
