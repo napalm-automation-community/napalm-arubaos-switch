@@ -12,6 +12,7 @@ from napalm_arubaoss.helper import (
     get_facts,
     get_arp_table,
     get_config,
+    get_interfaces,
     get_interfaces_ip,
     get_lldp_neighbors,
     get_lldp_neighbors_detail,
@@ -260,11 +261,66 @@ class ArubaOSS(NetworkDriver):
 
     def get_interfaces(self):
         """
-        Get interfaces - NOT IMPLEMENTED.
+        Return a dictionary of dictionaries. The keys for the first dictionary will be the \
+        interfaces in the devices. The inner dictionary will contain the following data for \
+        each interface.
 
-        :return:
+         * is_up (True/False)
+         * is_enabled (True/False)
+         * description (string)
+         * last_flapped (float in seconds) - NOT IMPLEMENTED (always -1.0)
+         * speed (int in Mbit)
+         * MTU (in Bytes) - NOT IMPLEMENTED (always -1)
+         * mac_address (string)
+
+        Example::
+
+            {
+            u'Management1':
+                {
+                'is_up': False,
+                'is_enabled': False,
+                'description': '',
+                'last_flapped': -1.0,
+                'speed': 1000,
+                'mtu': 1500,
+                'mac_address': 'FA:16:3E:57:33:61',
+                },
+            u'Ethernet1':
+                {
+                'is_up': True,
+                'is_enabled': True,
+                'description': 'foo',
+                'last_flapped': 1429978575.1554043,
+                'speed': 1000,
+                'mtu': 1500,
+                'mac_address': 'FA:16:3E:57:33:62',
+                },
+            u'Ethernet2':
+                {
+                'is_up': True,
+                'is_enabled': True,
+                'description': 'bla',
+                'last_flapped': 1429978575.1555667,
+                'speed': 1000,
+                'mtu': 1500,
+                'mac_address': 'FA:16:3E:57:33:63',
+                },
+            u'Ethernet3':
+                {
+                'is_up': False,
+                'is_enabled': True,
+                'description': 'bar',
+                'last_flapped': -1.0,
+                'speed': 1000,
+                'mtu': 1500,
+                'mac_address': 'FA:16:3E:57:33:64',
+                }
+            }
         """
-        return super(ArubaOSS, self).get_interfaces()
+        ret = get_interfaces(self)
+
+        return ret
 
     def get_interfaces_counters(self):
         """
