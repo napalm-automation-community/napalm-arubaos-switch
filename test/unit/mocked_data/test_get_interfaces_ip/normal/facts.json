@@ -1,0 +1,26 @@
+{
+  "ipaddresses": {
+    "status": 200,
+    "data": {
+      "collection_result": {
+        "total_elements_count": 1,
+        "filtered_elements_count": 1
+      },
+      "ip_address_subnet_element": [
+        {
+          "uri": "/vlans/1/ipaddresses/IAAM_STATIC-172.16.7.3",
+          "ip_address_mode": "IAAM_STATIC",
+          "vlan_id": 1,
+          "ip_address": {
+            "version": "IAV_IP_V4",
+            "octets": "172.16.7.3"
+          },
+          "ip_mask": {
+            "version": "IAV_IP_V4",
+            "octets": "255.255.254.0"
+          }
+        }
+      ]
+    }
+  }
+}

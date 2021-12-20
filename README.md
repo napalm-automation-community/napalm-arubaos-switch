@@ -1,3 +1,6 @@
+[![PyPI](https://img.shields.io/pypi/v/napalm-arubaos-switch.svg)](https://pypi.python.org/pypi/napalm-arubaos-switch)
+[![PyPI](https://img.shields.io/pypi/dm/napalm-arubaos-switch.svg)](https://pypi.python.org/pypi/napalm-arubaos-switch)
+[![Building Status](https://github.com/napalm-automation-community/napalm-arubaos-switch/workflows/Python%20package/badge.svg?branch=master)](https://github.com/napalm-automation-community/napalm-arubaos-switch/actions?query=workflow%3A"Python%20package")
 # Napalm-arubaoss
 Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some modules may not work properly in older versions.
 
@@ -7,6 +10,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * commit_config()                 ✅
     * compare_config()                ✅
     * compliance_report()             ✅
+    * confirm_commit()                ✅
     * discard_config()                ✅  
     * get_arp_table()                 ✅
     * get_bgp_config()                ❌*
@@ -32,6 +36,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * get_route_to()                  ✅
     * get_snmp_information()          ❌  - Planned
     * get_users()                     ❌  - Planned
+    * has_pending_commit()            ✅
     * is_alive()                      ✅
     * load_merge_candidate()          ✅**
     * load_replace_candidate()        ✅
@@ -75,6 +80,27 @@ rest-interface
 rest-interface session-idle-timeout 120 #optional
 ```
 
+### optional_args
+optional_args can be set during initialization like this:
+```Python
+from napalm import get_network_driver
+
+d = get_network_driver("arubaoss")
+
+with d('1.2.3.4', 'username', 'password', optional_args={'ssl_verify': False, "debugging": True}) as aruba:
+   print(aruba.get_config())
+```
+
+The following values can be set in optional_args:
+- ssl_verify: bool/str = defaults to **True** - will be passed to the requests object (description can be found [here](https://docs.python-requests.org/en/latest/_modules/requests/sessions/#Session.request))
+- keepalive: bool = defaults to **False** - sets the underlying TCP connection to either keep the connection or not and is a workaround for an issue with ArubaOS devices 
+  (discussed [here](https://community.arubanetworks.com/community-home/digestviewer/viewthread?MID=28798#bme4aa3703-e476-4880-9cb4-9b208f86b2f4))
+- keep_alive: bool = same as keepalive, just shadows it to be able to use the same keyword as in older Python requests versions
+- debugging: bool = defaults to **False** - sets the level of the logging handler to logging.DEBUG
+- disable_ssl_warnings: bool = defaults to **False** - disables ssl warnings from urllib3
+- api: string = defaults to **v6** - defines the API version
+- ssl: bool = defaults to **True**, sets http or https
+
 ### Saltstack
 To use the driver with Saltstack, you would typically need a proxy minion.
 
@@ -100,23 +126,23 @@ mine_enabled: true # not required, but nice to have
 
 #### Supported Salt execution modules
 
- - [grains.items](docs/saltstack.md#grains.items)
- - [net.arp](docs/saltstack.md#net.arp)
- - [net.mac](docs/saltstack.md#net.mac)
- - [net.ipaddrs](docs/saltstack.md#net.ipaddrs)
- - [net.lldp](docs/saltstack.md#net.lldp)
- - [net.facts](docs/saltstack.md#net.facts)
- - [net.ping](docs/saltstack.md#net.ping)
- - [net.traceroute](docs/saltstack.md#net.traceroute)
- - [route.show](docs/saltstack.md#route.show)
- - [net.cli](docs/saltstack.md#net.cli)
- - [net.config](docs/saltstack.md#net.config)
- - [net.load_config](docs/saltstack.md#net.load_config)
- - [net.compare_config](docs/saltstack.md#net.load_config)
+ - [grains.items](docs/saltstack.md#grainsitems)
+ - [net.arp](docs/saltstack.md#netarp)
+ - [net.mac](docs/saltstack.md#netmac)
+ - [net.ipaddrs](docs/saltstack.md#netipaddrs)
+ - [net.lldp](docs/saltstack.md#netlldp)
+ - [net.facts](docs/saltstack.md#netfacts)
+ - [net.ping](docs/saltstack.md#netping)
+ - [net.traceroute](docs/saltstack.md#nettraceroute)
+ - [route.show](docs/saltstack.md#routeshow)
+ - [net.cli](docs/saltstack.md#netcli)
+ - [net.config](docs/saltstack.md#netconfig)
+ - [net.load_config](docs/saltstack.md#netload_config)
+ - [net.compare_config](docs/saltstack.md#netload_config)
  - net.load_template ( Issue #18)
  - net.discard_config
- - [ntp.servers](docs/saltstack.md#ntp.servers)
- - [napalm.compliance_report](docs/saltstack.md#napalm.compliance_report)
+ - [ntp.servers](docs/saltstack.md#ntpservers)
+ - [napalm.compliance_report](docs/saltstack.md#napalmcompliance_report)
 
 More details in [Saltstack examples](docs/saltstack.md)
 

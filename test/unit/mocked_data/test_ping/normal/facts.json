@@ -1,0 +1,10 @@
+{
+  "ping": {
+    "status": 200,
+    "data": {
+      "uri": "/ping",
+      "result": "PR_OK",
+      "rtt_in_milliseconds": 21
+    }
+  }
+}

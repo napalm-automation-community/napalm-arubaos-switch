@@ -1,0 +1,16 @@
+{
+  "success": {
+    "probes_sent": 1,
+    "packet_loss": 0,
+    "rtt_min": 21,
+    "rtt_max": 21,
+    "rtt_avg": 21,
+    "rtt_stddev": 0,
+    "results": [
+      {
+        "ip_address": "8.8.8.8",
+        "rtt": 21
+      }
+    ]
+  }
+}

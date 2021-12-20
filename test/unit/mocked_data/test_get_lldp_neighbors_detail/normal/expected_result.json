@@ -1,0 +1,20 @@
+{
+  "oobm": [
+    {
+      "parent_interface": "",
+      "remote_system_name": "LAB-EDGE-SWITCH01",
+      "remote_chassis_id": "00 00 00 00 00 00",
+      "remote_port": "GigabitEthernet1/0/8",
+      "remote_port_description": "ARUBA-MGMT",
+      "remote_system_description": "HP Comware Platform Software, Software Version 5.20.99 Release 2222P01",
+      "remote_system_capab": [
+        "bridge",
+        "router"
+      ],
+      "remote_system_enable_capab": [
+        "bridge",
+        "router"
+      ]
+    }
+  ]
+}

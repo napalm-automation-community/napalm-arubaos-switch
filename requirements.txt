@@ -1,5 +1,5 @@
-napalm>=2.0.0
+napalm>=3.3.0
 netaddr
 requests
-requests-toolbelt
 textfsm>=1.1.0
+urllib3

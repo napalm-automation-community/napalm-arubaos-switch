@@ -1,0 +1,1 @@
+{"show ip route 1.0.4.0 bgp": "\n                         IP Route Entries to 1.0.4.0\n\n  Destination        Gateway         VLAN Type      Sub-Type   Metric     Dist.\n  ------------------ --------------- ---- --------- ---------- ---------- -----\n  1.0.4.0/24       NET_MGMT        4    bgp            1          0    \n \n\n\u0000"}

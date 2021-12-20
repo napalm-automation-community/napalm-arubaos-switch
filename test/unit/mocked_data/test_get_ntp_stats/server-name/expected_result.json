@@ -1,0 +1,15 @@
+[
+  {
+    "remote": "173.249.33.207",
+    "referenceid": "205.46.178.169",
+    "stratum": 2,
+    "type": "Server",
+    "when": "Wed Nov 10 18:01:18 2021",
+    "hostpoll": 7,
+    "reachability": 17,
+    "delay": 0.01628,
+    "offset": 0.0,
+    "jitter": 0.00075,
+    "synchronized": true
+  }
+]
