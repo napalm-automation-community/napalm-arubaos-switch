@@ -21,7 +21,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * get_facts()                     ✅
     * get_firewall_policies()         ❌*
     * get_interfaces_counters()       ❌***
-    * get_interfaces()                ❌
+    * get_interfaces()                ✅
     * get_interfaces_ip()             ✅
     * get_ipv6_neighbors_table()      ❌*
     * get_lldp_neighbors()            ✅

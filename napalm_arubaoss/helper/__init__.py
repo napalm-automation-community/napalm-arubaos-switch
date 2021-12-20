@@ -7,6 +7,7 @@ from napalm_arubaoss.helper.confirm_commit import confirm_commit
 from napalm_arubaoss.helper.get_arp_table import get_arp_table
 from napalm_arubaoss.helper.get_config import get_config
 from napalm_arubaoss.helper.get_facts import get_facts
+from napalm_arubaoss.helper.get_interfaces import get_interfaces
 from napalm_arubaoss.helper.get_interfaces_ip import get_interfaces_ip
 from napalm_arubaoss.helper.get_lldp_neighbors import get_lldp_neighbors
 from napalm_arubaoss.helper.get_lldp_neighbors_detail import get_lldp_neighbors_detail
@@ -43,6 +44,7 @@ __all__ = (
     "get_facts",
     "get_arp_table",
     "get_config",
+    "get_interfaces",
     "get_interfaces_ip",
     "get_lldp_neighbors",
     "get_lldp_neighbors_detail",
