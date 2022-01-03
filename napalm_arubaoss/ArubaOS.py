@@ -1,4 +1,5 @@
 """ArubaOS-Switch Napalm driver."""
+import ipaddress
 import logging
 import urllib3
 
@@ -73,6 +74,14 @@ class ArubaOSS(NetworkDriver):
 
         if optional_args.get("disable_ssl_warnings", False):
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+        # check if it is an IPv6
+        try:
+            ipaddress.IPv6Address(hostname)
+            # only reached if we got an IPv6 address
+            hostname = "[{}]".format(hostname)
+        except ValueError as ve:
+            pass
 
         self.hostname = hostname
         self.username = username
