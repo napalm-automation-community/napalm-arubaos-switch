@@ -1,5 +1,6 @@
 """Replace running config with the candidate."""
 
+import json
 from napalm.base.exceptions import ReplaceConfigException
 import logging
 
@@ -37,3 +38,4 @@ def load_replace_candidate(self, filename=None, config=None):
             raise ReplaceConfigException(
                 f"Load configuration failed - Reason: {load.text}"
             )
+        self.open()
