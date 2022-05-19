@@ -27,7 +27,7 @@ def compare_config(self):
     diff = self.connection.post(url, json=data)
 
     if not diff.ok:
-        raise CommandErrorException("diff generation failed, raise status")
+        raise CommandErrorException(f"diff generation failed, raise status {diff.text}")
 
     for loop_round in range(1, 6):
         # wait a second to give the device time to process
