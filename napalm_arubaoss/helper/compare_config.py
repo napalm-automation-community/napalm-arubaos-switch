@@ -49,4 +49,4 @@ def compare_config(self):
                 return ""
             continue
         else:
-            return diff_output.json()
+            return str(diff_output.json())
