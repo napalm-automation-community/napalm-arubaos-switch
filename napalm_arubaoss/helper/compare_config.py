@@ -27,7 +27,7 @@ def compare_config(self):
     diff = self.connection.post(url, json=data)
 
     if not diff.ok:
-        raise CommandErrorException("diff generation failed, raise status")
+        raise CommandErrorException(f"diff generation failed, raise status {diff.text}")
 
     for loop_round in range(1, 6):
         # wait a second to give the device time to process
@@ -49,4 +49,20 @@ def compare_config(self):
                 return ""
             continue
         else:
-            return diff_output.json()
+            diff_object = diff_output.json()
+            out = """
+Differences between running config and REST_Payload_Backup
+
+Configuration delete list:
+
+{delete_list}
+
+Configuration add list:
+
+{add_list}
+""".format(
+                delete_list="\n".join(diff_object.get("diff_remove_list")),
+                add_list="\n".join(diff_object.get("diff_add_list"))
+            )
+
+            return out
