@@ -4,6 +4,8 @@ import logging
 
 from time import sleep
 
+import yaml
+
 from napalm.base.exceptions import CommandErrorException
 
 logger = logging.getLogger("arubaoss.helper.compare_config")
@@ -49,4 +51,4 @@ def compare_config(self):
                 return ""
             continue
         else:
-            return str(diff_output.json())
+            return yaml.dump(diff_output.json())
