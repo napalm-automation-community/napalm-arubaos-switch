@@ -1,9 +1,9 @@
 """Replace running config with the candidate."""
 
-from napalm.base.exceptions import ReplaceConfigException
 import logging
 
 from napalm_arubaoss.helper.utils import str_to_b64, read_candidate
+from napalm.base.exceptions import ReplaceConfigException
 
 logger = logging.getLogger("arubaoss.helper.load_replace_candidate")
 
@@ -37,3 +37,4 @@ def load_replace_candidate(self, filename=None, config=None):
             raise ReplaceConfigException(
                 f"Load configuration failed - Reason: {load.text}"
             )
+        self.open()
