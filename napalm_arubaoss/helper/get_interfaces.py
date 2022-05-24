@@ -15,7 +15,7 @@ def get_interfaces(self):
         'is_enabled': False,
         'description': '',
         'last_flapped': -1.0,
-        'speed': 1000,
+        'speed': 1000.0,
         'mtu': -1,
         'mac_address': 'FA:16:3E:57:33:61',
     }
@@ -55,7 +55,7 @@ def get_interfaces(self):
         if i_id not in output.keys():
             output[i_id] = interface_template.copy()
 
-        output[i_id]["speed"] = speed
+        output[i_id]["speed"] = float(speed)
 
     for interface_id, interface_values in output.items():
         resp = self.connection.run_cmd(
