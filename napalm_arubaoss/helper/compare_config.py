@@ -51,4 +51,4 @@ def compare_config(self):
                 return ""
             continue
         else:
-            return yaml.dump(diff_output.json())
+            return diff_output.text
