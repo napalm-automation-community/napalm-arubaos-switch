@@ -53,16 +53,16 @@ def compare_config(self):
         else:
             diff_object = diff_output.json()
             out = """
-                Differences between running config and REST_Payload_Backup
-    
-                Configuration delete list:
-    
-                {delete_list}
-    
-                Configuration add list:
-    
-                {add_list}
-            """.format(
+Differences between running config and REST_Payload_Backup
+
+Configuration delete list:
+
+{delete_list}
+
+Configuration add list:
+
+{add_list}
+""".format(
                 delete_list="\n".join(diff_object.get("diff_remove_list")),
                 add_list="\n".join(diff_object.get("diff_add_list"))
             )
