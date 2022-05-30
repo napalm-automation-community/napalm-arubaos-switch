@@ -2,9 +2,9 @@
 
 import logging
 
-from napalm_arubaoss.helper.utils import str_to_b64, read_candidate
-from napalm_arubaoss.helper.is_alive import is_alive
-from napalm.base.exceptions import ReplaceConfigException, ConnectionClosedException
+from napalm.base.exceptions import ConnectionClosedException, ReplaceConfigException
+
+from napalm_arubaoss.helper.utils import read_candidate, str_to_b64
 
 logger = logging.getLogger("arubaoss.helper.load_replace_candidate")
 

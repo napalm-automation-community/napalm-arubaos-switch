@@ -4,10 +4,10 @@ import logging
 
 from napalm.base.exceptions import CommitError
 
-from napalm_arubaoss.helper.utils import backup_config, commit_candidate
 from napalm_arubaoss.helper.get_config import get_config
-from napalm_arubaoss.helper.load_replace_candidate import load_replace_candidate
 from napalm_arubaoss.helper.has_pending_commit import has_pending_commit
+from napalm_arubaoss.helper.load_replace_candidate import load_replace_candidate
+from napalm_arubaoss.helper.utils import backup_config, commit_candidate
 
 logger = logging.getLogger("arubaoss.helper.commit_config")
 

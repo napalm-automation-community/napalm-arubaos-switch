@@ -2,8 +2,9 @@
 
 import base64
 import logging
-from time import sleep
 from itertools import zip_longest
+from time import sleep
+
 from napalm.base.exceptions import CommandTimeoutException, CommitError
 
 logger = logging.getLogger("arubaoss.helper.utils")
@@ -161,7 +162,6 @@ def commit_candidate(self, config):
 
     else:
         raise CommitError(f"{cmd_post.json().get('failure_reason', 'failure during cfg_restore but no failure_reason')}")
-
 
 
 def mac_reformat(mac):

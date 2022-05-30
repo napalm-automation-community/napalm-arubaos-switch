@@ -1,23 +1,23 @@
 """ArubaOS-Switch Napalm driver."""
 import logging
-import urllib3
 
-from napalm_arubaoss.helper.base import Connection
+from napalm.base.base import NetworkDriver
+
 from napalm_arubaoss.helper import (
     backup_config,
     commit_config,
     compare_config,
     confirm_commit,
-    get_mac_address_table,
-    get_facts,
     get_arp_table,
     get_config,
+    get_facts,
     get_interfaces,
     get_interfaces_ip,
     get_lldp_neighbors,
     get_lldp_neighbors_detail,
-    get_ntp_stats,
+    get_mac_address_table,
     get_ntp_servers,
+    get_ntp_stats,
     get_route_to,
     has_pending_commit,
     is_alive,
@@ -27,8 +27,10 @@ from napalm_arubaoss.helper import (
     rollback,
     traceroute,
 )
+from napalm_arubaoss.helper.base import Connection
 
-from napalm.base.base import NetworkDriver
+import urllib3
+
 
 logger = logging.getLogger("arubaoss")
 logger.setLevel(logging.INFO)

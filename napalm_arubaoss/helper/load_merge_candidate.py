@@ -1,9 +1,10 @@
 """Merge candidate configuration with the running one."""
 
-from napalm.base.exceptions import MergeConfigException
 import logging
 
-from napalm_arubaoss.helper.utils import read_candidate, config_batch, backup_config
+from napalm.base.exceptions import MergeConfigException
+
+from napalm_arubaoss.helper.utils import backup_config, config_batch, read_candidate
 
 logger = logging.getLogger("arubaoss.helper.load_merge_candidate")
 

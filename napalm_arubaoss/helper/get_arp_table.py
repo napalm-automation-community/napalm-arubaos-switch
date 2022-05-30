@@ -1,7 +1,8 @@
 """Backups and commit the configuration, and handles commit confirm."""
 
-from napalm.base.helpers import textfsm_extractor
 import logging
+
+from napalm.base.helpers import textfsm_extractor
 
 from napalm_arubaoss.helper.utils import mac_reformat
 

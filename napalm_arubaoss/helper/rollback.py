@@ -2,8 +2,8 @@
 
 import logging
 
-from napalm_arubaoss.helper.utils import commit_candidate
 from napalm_arubaoss.helper.compare_config import compare_config
+from napalm_arubaoss.helper.utils import commit_candidate
 
 logger = logging.getLogger("arubaoss.helper.rollback")
 

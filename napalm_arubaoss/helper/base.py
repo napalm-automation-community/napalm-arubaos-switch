@@ -3,12 +3,12 @@
 
 import base64
 import logging
-
 from json import JSONDecodeError
+
+from napalm.base.exceptions import ConnectAuthError, NapalmException
 
 from requests import Session
 from requests.models import Response
-from napalm.base.exceptions import ConnectAuthError, NapalmException
 
 
 logger = logging.getLogger("arubaoss.helper.base")
