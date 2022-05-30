@@ -3,7 +3,8 @@
 import logging
 
 from napalm_arubaoss.helper.utils import str_to_b64, read_candidate
-from napalm.base.exceptions import ReplaceConfigException
+from napalm_arubaoss.helper.is_alive import is_alive
+from napalm.base.exceptions import ReplaceConfigException, ConnectionClosedException
 
 logger = logging.getLogger("arubaoss.helper.load_replace_candidate")
 
@@ -37,4 +38,9 @@ def load_replace_candidate(self, filename=None, config=None):
             raise ReplaceConfigException(
                 f"Load configuration failed - Reason: {load.text}"
             )
-        self.open()
+
+        # workaround for the case where the device closes the HTTP session
+        try:
+            self.is_alive()
+        except ConnectionClosedException:
+            self.open()
