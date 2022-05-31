@@ -136,7 +136,6 @@ def transaction_status(self, url):
         raise CommitError(f"Transaction failed: {status}")
 
     while status_call()["result"].get("status", "") == "CRS_IN_PROGRESS" and elapsed < self.connection.timeout:
-        print(status_call())
         elapsed += 1
         sleep(1)
 
