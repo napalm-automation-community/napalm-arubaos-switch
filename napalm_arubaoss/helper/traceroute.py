@@ -1,7 +1,7 @@
 """Execute traceroute on the device and returns a dictionary with the result."""
 
-import socket
 import logging
+import socket
 
 logger = logging.getLogger("arubaoss.helper.traceroute")
 

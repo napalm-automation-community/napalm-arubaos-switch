@@ -1,7 +1,8 @@
 """Check if device connection is alive."""
 
-from napalm.base.exceptions import ConnectionClosedException
 import logging
+
+from napalm.base.exceptions import ConnectionClosedException
 
 logger = logging.getLogger("arubaoss.helper.is_alive")
 

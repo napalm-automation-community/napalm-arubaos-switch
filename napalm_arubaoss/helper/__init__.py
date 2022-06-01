@@ -24,9 +24,9 @@ from napalm_arubaoss.helper.rollback import rollback
 from napalm_arubaoss.helper.traceroute import traceroute
 from napalm_arubaoss.helper.utils import (
     backup_config,
-    mac_reformat,
     commit_candidate,
     config_batch,
+    mac_reformat,
     read_candidate,
     str_to_b64,
     transaction_status,

@@ -1,9 +1,10 @@
 """Replace running config with the candidate."""
 
-from napalm.base.exceptions import ReplaceConfigException
 import logging
 
-from napalm_arubaoss.helper.utils import str_to_b64, read_candidate
+from napalm.base.exceptions import ConnectionClosedException, ReplaceConfigException
+
+from napalm_arubaoss.helper.utils import read_candidate, str_to_b64
 
 logger = logging.getLogger("arubaoss.helper.load_replace_candidate")
 
@@ -37,3 +38,9 @@ def load_replace_candidate(self, filename=None, config=None):
             raise ReplaceConfigException(
                 f"Load configuration failed - Reason: {load.text}"
             )
+
+        # workaround for the case where the device closes the HTTP session
+        try:
+            self.is_alive()
+        except ConnectionClosedException:
+            self.open()

@@ -2,9 +2,10 @@
 
 import base64
 import logging
-from time import sleep
 from itertools import zip_longest
-from napalm.base.exceptions import CommandTimeoutException
+from time import sleep
+
+from napalm.base.exceptions import CommandTimeoutException, CommitError
 
 logger = logging.getLogger("arubaoss.helper.utils")
 
@@ -109,17 +110,37 @@ def transaction_status(self, url):
     :param url:
     :return:
     """
-    status = "CRS_IN_PROGRESS"
-    elapsed = 0
-    while status == "CRS_IN_PROGRESS" and elapsed < self.connection.timeout:
+    def status_call():
+        status = {
+            "result":
+            {
+                "status": "",
+                "http_status_code": None,
+                "failure_reason": ""
+            }
+        }
         call = self.connection.get(url)
         if call.status_code in range(200, 300):
-            status = call.json()
-            return status
+            status["result"]["status"] = call.json().get("status")
+            status["result"]["failure_reason"] = call.json().get("failure_reason")
+            status["result"]["http_status_code"] = call.status_code
+        if call.status_code not in range(200, 300):
+            status["result"]["http_status_code"] = call.status_code
+        return status
+
+    # status = "CRS_IN_PROGRESS"
+    elapsed = 0
+    status = status_call()
+
+    if status["result"].get("status", "") == "CRS_FAILED":
+        raise CommitError(f"Transaction failed: {status}")
+
+    while status_call()["result"].get("status", "") == "CRS_IN_PROGRESS" and elapsed < self.connection.timeout:
         elapsed += 1
         sleep(1)
-    if elapsed == (int(self.connection.timeout) - 1) and status == "CRS_IN_PROGRESS":
-        raise CommandTimeoutException("Transaction timed out")
+
+    if elapsed == (int(self.connection.timeout) - 1) and status_call()["result"].get("status", "") == "CRS_IN_PROGRESS":
+        raise CommandTimeoutException(f"Transaction timed out: {status_call()}")
 
 
 def commit_candidate(self, config):
@@ -134,10 +155,12 @@ def commit_candidate(self, config):
     data = {"server_type": "ST_FLASH", "file_name": config, "is_oobm": False}
     cmd_post = self.connection.post(url, json=data)
 
-    if not cmd_post.json()["failure_reason"]:
+    if not cmd_post.json().get("failure_reason", True):
         check_url = url + "/status"
+        transaction_status(self=self, url=check_url)
 
-        return transaction_status(self=self, url=check_url)
+    else:
+        raise CommitError(f"{cmd_post.json().get('failure_reason', 'failure during cfg_restore but no failure_reason')}")
 
 
 def mac_reformat(mac):

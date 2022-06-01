@@ -1,7 +1,8 @@
 """Get IP interface IP addresses."""
 
-from netaddr import IPNetwork
 import logging
+
+from netaddr import IPNetwork
 
 logger = logging.getLogger("arubaoss.helper.get_interfaces_ip")
 
