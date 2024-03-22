@@ -35,7 +35,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * get_probes_*()                  ❌*
     * get_route_to()                  ✅
     * get_snmp_information()          ❌  - Planned
-    * get_users()                     ❌  - Planned
+    * get_users()                     ❌*
     * has_pending_commit()            ✅
     * is_alive()                      ✅
     * load_merge_candidate()          ✅**
