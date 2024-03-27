@@ -17,7 +17,7 @@ Driver implementation for Aruba OS Switch. Tested in AOS > WC.16.09.0004, some m
     * get_bgp_neighbors()             ❌*
     * get_bgp_neighbors_detail()      ❌*
     * get_config()                    ✅
-    * get_environment()               ❌  - Planned
+    * get_environment()               ✅
     * get_facts()                     ✅
     * get_firewall_policies()         ❌*
     * get_interfaces_counters()       ❌***

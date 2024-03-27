@@ -1,0 +1,47 @@
+{
+  "fans": {
+    "Chassis Fan-1": {
+      "status": true
+    },
+    "Chassis Fan-2": {
+      "status": true
+    },
+    "Chassis Fan-3": {
+      "status": true
+    },
+    "PS Fan-4": {
+      "status": true
+    },
+    "PS Fan-5": {
+      "status": true
+    }
+  },
+  "temperature": {
+    "Chassis": {
+      "temperature": 12,
+      "is_alert": false,
+      "is_critical": false
+    }
+  },
+  "power": {
+    "1": {
+      "status": true,
+      "capacity": 680,
+      "output": 14
+    },
+    "2": {
+      "status": true,
+      "capacity": 680,
+      "output": 19
+    }
+  },
+  "cpu": {
+    "0": {
+      "%usage": 0
+    }
+  },
+  "memory": {
+    "available_ram": 338190848,
+    "used_ram": 177716208
+  }
+}

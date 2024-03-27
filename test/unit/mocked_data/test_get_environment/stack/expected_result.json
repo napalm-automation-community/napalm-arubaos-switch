@@ -1,0 +1,80 @@
+{
+  "fans": {
+    "Member 1 Chassis Sys-1": {
+      "status": true
+    },
+    "Member 1 Chassis Sys-2": {
+      "status": true
+    },
+    "Member 1 Chassis Sys-3": {
+      "status": true
+    },
+    "Member 1 PS Sys-4": {
+      "status": true
+    },
+    "Member 1 PS Sys-5": {
+      "status": true
+    },
+    "Member 2 Chassis Sys-1": {
+      "status": true
+    },
+    "Member 2 Chassis Sys-2": {
+      "status": true
+    },
+    "Member 2 Chassis Sys-3": {
+      "status": true
+    },
+    "Member 2 PS Sys-4": {
+      "status": true
+    },
+    "Member 2 PS Sys-5": {
+      "status": true
+    }
+  },
+  "temperature": {
+    "Member 1 Chassis": {
+      "temperature": 26,
+      "is_alert": false,
+      "is_critical": false
+    },
+    "Member 2 Chassis": {
+      "temperature": 27,
+      "is_alert": false,
+      "is_critical": false
+    }
+  },
+  "power": {
+    "Member 1 1": {
+      "status": true,
+      "capacity": 680,
+      "output": 79
+    },
+    "Member 1 2": {
+      "status": true,
+      "capacity": 680,
+      "output": 66
+    },
+    "Member 2 1": {
+      "status": true,
+      "capacity": 680,
+      "output": 29
+    },
+    "Member 2 2": {
+      "status": true,
+      "capacity": 680,
+      "output": 38
+    }
+  },
+  "cpu": {
+    "Member 1": {
+      "%usage": 2
+    },
+    "Member 2": {
+      "%usage": 0
+    }
+  },
+  "memory": {
+    "available_ram": 667067392,
+    "used_ram": 355910652
+  }
+}

@@ -11,6 +11,7 @@ from napalm_arubaoss.helper import (
     confirm_commit,
     get_arp_table,
     get_config,
+    get_environment,
     get_facts,
     get_interfaces,
     get_interfaces_ip,
@@ -230,27 +231,13 @@ class ArubaOSS(NetworkDriver):
 
     def get_environment(self):
         """
-        Get environment readings - NOT IMPLEMENTED.
-
-        Currently (API v7) the API does not support reading information about
-        fans, temperature, power or CPU.
-        A textfsm template needs to be created to parse:
-         - show system temperature
-         - show system fan
-         - show system power-consumption
-         - show system power-supply
-         - show system information (CPU/MEM)
+        Get environment readings
 
         :return:
-        output = {
-            "fans": {},
-            "temperature": {},
-            "power": {},
-            "cpu": {},
-            "memory": {}
-        }
         """
-        return super(ArubaOSS, self).get_environment()
+        ret = get_environment(self=self)
+
+        return ret
 
     def get_facts(self):
         """
@@ -504,7 +491,7 @@ class ArubaOSS(NetworkDriver):
 
         :return:
         """
-        return super(ArubaOSS, self).get_users()
+        return get_users()
 
     def has_pending_commit(self):
         """
